@@ -1,0 +1,23 @@
+{
+    "jquery.cookie" : ["jquery"],
+    "jquery.easing" : ["jquery"],
+    "jquery.slide" : ["jquery"],
+    "jquery.flexslider" : ["jquery"],
+    "jquery.layer" : ["jquery"],
+    "jquery.infinitescroll" : ["jquery"],
+    "jquery.page" : ["jquery"],
+    "jquery.calendar": ["jquery"],
+    "zepto": {
+        "exports": "$"
+    },
+    "underscore": {
+        "exports": "_"
+    },
+    "xss": {
+        "exports": "filterXSS"
+    },
+    "avalon": {
+        "exports": "avalon"
+    }
+
+}

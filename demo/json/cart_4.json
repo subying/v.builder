@@ -1,0 +1,46 @@
+{
+    "quantity": 4,
+    "total_amount": 607.8,
+    "details": [{
+        "sku_no": "TM11070600007",
+        "deal_hash_id": "gz150105p34bk",
+        "product_id": "34",
+        "short_name": "\u5b8c\u7f8e\u82a6\u835f\u80f6\u4e00\u5bf940g*2",
+        "quantity": 2,
+        "item_price": "59.9",
+        "item_discount_price": "59.9",
+        "site": "",
+        "show_category": "deal",
+        "image_60": "http:\/\/p4.jmstatic.com\/product\/000\/000\/34_std\/34_60_60.jpg",
+        "image_100": "http:\/\/p4.jmstatic.com\/product\/000\/000\/34_std\/34_100_100.jpg",
+        "url": "http:\/\/gz.jumei.com\/i\/deal\/gz150105p34bk.html"
+    }, {
+        "sku_no": "1039097",
+        "deal_hash_id": "gz150105p230856bk",
+        "product_id": "230856",
+        "short_name": "\u73c0\u83b1\u96c5\u65b0\u67d4\u7699\u7f8e\u767d\u8865\u6c34\u5957\u88c5",
+        "quantity": "1",
+        "item_price": "99",
+        "item_discount_price": "99",
+        "site": "gz",
+        "show_category": "deal",
+        "image_60": "http:\/\/p1.jmstatic.com\/product\/000\/230\/230856_std\/230856_60_60.jpg",
+        "image_100": "http:\/\/p1.jmstatic.com\/product\/000\/230\/230856_std\/230856_100_100.jpg",
+        "url": "http:\/\/gz.jumei.com\/i\/deal\/gz150105p230856bk.html"
+    }, {
+        "sku_no": "TM11052400002",
+        "deal_hash_id": "d150318p1150zc",
+        "product_id": "1150",
+        "short_name": "\u5170\u853b\u5947\u8ff9\u9999\u6c1b30ml",
+        "quantity": "1",
+        "item_price": "389",
+        "item_discount_price": "389",
+        "site": "",
+        "show_category": "deal",
+        "image_60": "http:\/\/p0.jmstatic.com\/product\/000\/001\/1150_std\/1150_60_60.jpg",
+        "image_100": "http:\/\/p0.jmstatic.com\/product\/000\/001\/1150_std\/1150_100_100.jpg",
+        "url": "http:\/\/gz.jumei.com\/i\/deal\/d150318p1150zc.html"
+    }],
+    "mtime": 1426667404,
+    "etime": 1187
+}

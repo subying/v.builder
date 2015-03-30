@@ -1,0 +1,13 @@
+{
+	"evn":"debug",
+    "isCombo":true,
+    "cndDomain":"static.local",
+    "theme":"asset",
+    "htmlTplPath": "../demo",
+    "phpHashMapPath": "../demo/hashmap",
+    "jsPrefix":"sm.",
+    "coreJsName":"core_libs",
+    "indexJsName":"index_mod",
+    "indexJsModuleID":"mods/index/main",
+    "hashLength":10 
+}

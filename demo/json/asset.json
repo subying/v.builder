@@ -1,0 +1,25 @@
+{
+    "account": 0,
+    "red_envelope_count": 0,
+    "red_envelope_list": [],
+    "promocards_count": 6,
+    "promocards_list": [{
+        "title": "\u805a\u7f8e\u4f18\u54c15\u5143\u73b0\u91d1\u5238",
+        "expire_time": "2015-03-19 15:43",
+        "satisfied": "\u65e0\u542f\u7528\u91d1\u989d\u9650\u5236",
+        "card_no": "SDEH92R5WMQRJU",
+        "amount": 5
+    }, {
+        "title": "\u805a\u7f8e\u4f18\u54c110\u5143\u73b0\u91d1\u5238",
+        "expire_time": "2015-03-19 15:43",
+        "satisfied": " \u6ee1100\u5143\u53ef\u4f7f\u7528",
+        "card_no": "DS8NQQ8CDMMG6G",
+        "amount": 10
+    }, {
+        "title": "\u805a\u7f8e\u4f18\u54c120\u5143\u73b0\u91d1\u5238",
+        "expire_time": "2015-03-19 15:43",
+        "satisfied": " \u6ee1200\u5143\u53ef\u4f7f\u7528",
+        "card_no": "DSRLGVLF4ZWBAT",
+        "amount": 20
+    }]
+}

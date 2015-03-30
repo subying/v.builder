@@ -1,0 +1,61 @@
+<a title="关闭" class="ibar_closebtn" href="javascript:;" vm-click="hidePanel(20)"></a>
+<span class="ibar_loading_text">正在为您努力加载数据！</span>
+<div class="ibar_plugin ibar_recharge_content" id="iBarRecharge">
+    <div class="ibar_plugin_title"><span class="ibar_plugin_name">手机充话费</span>
+    </div>
+    <div class="ibar_plugin_content">
+        <form class="ibar_recharge_form " method="get" target="_blank" action="//cart.jumei.com/m/forward/">
+            <div style="*z-index: 3; *position: relative" class="ibar_recharge-field ibar_recharge-num">
+                <label>号码</label>
+                <div class="ibar_recharge-input ibar_recharge-fl">
+                    <div class="ibar_recharge-iwrapper">
+                        <input type="text" autocomplete="off" placeholder="手机号码" name="hp" maxlength="13">
+                    </div><i title="查看充值历史" class="ibar_recharge-contact"></i>
+                    <div class="ibar_recharge-tooltip" style="display: none;">
+                        <p class="no-phone ibar_pink">请填写您的手机号码</p>
+                        <p class="phone-error ibar_pink">请填写正确的手机号码</p>
+                        <p class="zoom-in ibar_pink"></p>
+                        <ul class="phone-list"></ul>
+                        <p class="no-history ibar_pink">您还没有充值记录</p>
+                    </div>
+                </div>
+            </div>
+            <div style="*z-index: 2" class="ibar_recharge-field">
+                <label>面值</label>
+                <div class="ibar_recharge-fl ibar_recharge-vwrapper">
+                    <p class="ibar_recharge-mod"><span class="ibar_recharge-val">100</span> 元</p><i class="ibar_recharge-arrow"></i>
+                    <div class="ibar_recharge-vbox clearfix" style="display: none;">
+                        <ul>
+                            <li class="selected"><span>100</span>元</li>
+                            <li><span>200</span>元</li>
+                            <li><span>300</span>元</li>
+                            <li><span>500</span>元</li>
+                        </ul>
+                        <ul class="last-ul">
+                            <li><span>10</span>元</li>
+                            <li><span>20</span>元</li>
+                            <li><span>30</span>元</li>
+                            <li><span>50</span>元</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="ibar_recharge-field ibar_recharge-pwrapper">
+                <label>售价</label>
+                <div class="ibar_recharge-fl">
+                    <p><span class="ibar_pink sell-status"><span class="on-sell"><span class="ibar_recharge-price">98.70 ~ 99.80</span> 元</span><span class="sold-out">暂时缺货</span></span><span class="ibar_recharge-operator"></span>
+                    </p>
+                    <input type="hidden" value="" name="sku_no">
+                    <input type="hidden" value="" name="customers_price">
+                    <input type="hidden" value="" name="market_price">
+                    <input type="hidden" value="ibar_mobile_recharge" name="from">
+                    <input type="hidden" value="" name="province">
+                    <input type="hidden" value="" name="mall_id">
+                </div>
+            </div>
+            <div class="ibar_recharge-btn">
+                <input type="submit" value="立即充值">
+            </div>
+        </form>
+    </div>
+</div>

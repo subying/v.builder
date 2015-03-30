@@ -1,0 +1,10 @@
+<ul id="headerTopLeft" class="header_top_left" vm-if="isLogin">
+    <li class="signin">欢迎您，<span class="col_jumei"><a target="_blank" href="http://www.jumei.com/i/order/list">JM135ACCE2090</a></span> [ <a href="http://passport.jumei.com/i/account/logout" class="signout">退出</a> ]</li>
+</ul>
+<ul class="header_top_left" id="headerTopLeft" vm-if="!isLogin">
+    <li>欢迎来到聚美！</li>
+    <li><a href="http://www.jumei.com/i/account/login" rel="nofollow">请登录</a>
+    </li>
+    <li><a href="http://www.jumei.com/i/account/signup" rel="nofollow">快速注册</a>
+    </li>
+</ul>

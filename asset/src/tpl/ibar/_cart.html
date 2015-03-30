@@ -1,0 +1,42 @@
+<a title="关闭" class="ibar_closebtn" href="javascript:;" vm-click="hidePanel(20)">
+</a>
+<span class="ibar_loading_text">正在为您努力加载数据！</span>
+<div class="ibar_plugin ibar_cart_content" id="iBarCart">
+    <div class="ibar_plugin_title"><span class="ibar_plugin_name">购物车<span class="ibar_cart_timer" style="display: inline;">已超时，请尽快结算</span></span>
+    </div>
+    <div class="ibar_plugin_content ibar_cart_content">
+        <div class="ibar_cart_group_container" style="position: absolute;">
+            <div class="ibar_cart_group ibar_cart_product">
+                <div class="ibar_cart_group_header clearfix"><span class="ibar_cart_group_title">聚美优品</span><span class="ibar_cart_group_shop ibar_text_ellipsis"></span><span class="ibar_cart_group_baoyou ibar_pink">新用户首单满<i>39</i>元包邮</span>
+                </div>
+                <ul class="ibar_cart_group_items">
+                    <li class="ibar_cart_item clearfix" vm-repeat="cartInfo.product.items">
+                        <div class="ibar_cart_item_pic">
+                            <a target="_blank" vm-attr-title="el.short_name" vm-href="el.url + '?from=ibar_cart'"><img vm-attr-alt="el.short_name" vm-src="el.image_100"><span class="ibar_cart_item_tag png" vm-class="ibar_cart_item_tag_active ibar_cart_item_tag_soldout:el.sale_status != ''"></span>
+                            </a>
+                        </div>
+                        <div class="ibar_cart_item_desc">
+                            <span class="ibar_cart_item_name_wrapper">
+                                <span class="ibar_cart_item_global">[极速免税店]</span>
+                            <a target="_blank" class="ibar_cart_item_name" vm-attr-title="el.short_name" vm-href="el.url + '?from=ibar_cart'">{{el.short_name}}</a>
+                            </span>
+                            <div class="ibar_cart_item_sku ibar_text_ellipsis">
+                                <span>{{el.attribute}}</span>
+                            </div>
+                            <div class="ibar_cart_item_price ibar_pink">
+                                <span class="unit_price">￥{{el.item_price}}</span>
+                                <span class="unit_plus"> x </span>
+                                <span class="ibar_cart_item_count">{{el.quantity}}</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <p class="ibar_cart_loading_text">正在为您努力地加载数据！</p>
+        </div>
+        <div class="ibar_cart_handler ibar_cart_handler_attached" style="display: block; bottom: 45px">
+            <div class="ibar_cart_handler_header clearfix"><span class="ibar_cart_handler_header_left">共 <span class="ibar_cart_total_quantity ibar_pink">{{cartInfo.quantity}}</span> 件商品</span><span class="ibar_cart_total_price ibar_pink">￥{{cartInfo.total_amount}}</span>
+            </div><a target="_blank" href="http://cart.jumei.com/i/cart/show?from=ibar_cart_button" class="ibar_cart_go_btn">去购物车结算</a>
+        </div>
+    </div>
+</div>
