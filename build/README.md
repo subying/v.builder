@@ -126,52 +126,14 @@ gulp init
 
 ```
 
-启动开发模式
+默认启动开发模式
+```
+gulp
 ```
 
+发布
+```
+gulp release
 ```
 
-###html和CSS
-本项目以LESS作为css的预处理器，相关的知识请参考 [LESS语法](http://www.bootcss.com/p/lesscss/)
-```
-├── asset
-    ├──dist
-        ├──css
-        └──map
-    ├──img
-        ├──sp
-        └──bg
-    ├──src
-        ├──_css
-        ├──_img
-            ├──sp
-            ├──bg
-        ├──less
-            ├──global
-            ├──sprite
-            ├──mods
-            ├──utils
-        ├──sprite
-```
-
-页面样式组成：公共模块+当前模块
-
-common.css的less源码
-```css
-//引入common模块
-@import 'global/common';
-
-// 引入主导航
-@import 'global/mainnav';
-
-// 引入侧边模块
-@import 'global/ibar';
-
-```
-
-newhome.css的less源码
-```css
-// 当前模块样式
-@import 'mods/newhome';
-```
 
