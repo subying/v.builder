@@ -127,8 +127,6 @@ gulp init
 ```
 
 
-![项目预览](./readme.jpg)
-
 默认启动开发模式
 ```
 gulp
@@ -139,4 +137,14 @@ gulp
 gulp release
 ```
 
+### 项目的开发架构
 
+![项目预览](./readme.jpg)
+
+### HTML和CSS的组织规范建议
+
+![项目预览](./html_css.jpg)
+
+### JavaScript的组织规范建议
+
+![项目预览](./javascript.jpg)
