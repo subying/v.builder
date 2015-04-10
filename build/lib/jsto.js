@@ -3,7 +3,7 @@
 /*
  * js生产文件构建类
  */
-var _, _uglify, amdeps, butil, color, config, errrHandler, flctl, fs, gulp, gutil, header, info, jsDepBuilder, jsToDev, jsToDist, objMixin, path, pkg, plumber, revall, rjs, uglify,
+var _, _uglify, amdeps, butil, color, config, errrHandler, flctl, fs, gulp, gutil, header, info, jsDepBuilder, jsToDev, objMixin, path, pkg, plumber, revall, rjs, uglify,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty,
@@ -262,113 +262,4 @@ jsToDev = (function(superClass) {
 
 })(jsDepBuilder);
 
-
-/*
- * js生产文件的构建类
- */
-
-jsToDist = (function() {
-  function jsToDist() {
-    this.push = bind(this.push, this);
-    this.updateMap = bind(this.updateMap, this);
-    this.isChange = bind(this.isChange, this);
-    this.jsDistList = bind(this.jsDistList, this);
-  }
-
-  jsToDist.prototype.jsPath = config.jsOutPath;
-
-  jsToDist.prototype.jsDistPath = config.jsDistPath;
-
-  jsToDist.prototype.mapPath = config.mapPath;
-
-  jsToDist.prototype.getMap = butil.getJSONSync(path.join(config.mapPath, config.jsMapName));
-
-  jsToDist.prototype.getOldMap = butil.getJSONSync(path.join(config.mapPath, "old_" + config.jsMapName));
-
-  jsToDist.prototype.jsDistList = function() {
-    var _jsList;
-    _jsList = new flctl('.js').getList();
-    return _jsList || [];
-  };
-
-
-  /* 判断js是否有改变 */
-
-  jsToDist.prototype.isChange = function(name) {
-    var _jsList, _keyName, _map, _valName;
-    _valName = name;
-    _keyName = name.split('.')[0] + '.js';
-    _map = this.getMap;
-    _jsList = this.jsDistList();
-    return {
-      status: !_.has(_map, _keyName) || _map[_keyName].replace('/', '') !== name || indexOf.call(_jsList, name) < 0,
-      key: _keyName,
-      valule: _map[_keyName] || ""
-    };
-  };
-
-
-  /* 更新上一个版本的js Hash表 */
-
-  jsToDist.prototype.updateMap = function(newMap, cb) {
-    var _file, _map, _newMap, _oldMap, _str, _temp;
-    _map = this.getMap;
-    _oldMap = this.getOldMap;
-    _temp = objMixin(_map, newMap);
-    _newMap = objMixin(_oldMap, _temp);
-    _file = path.join(config.mapPath, "old_" + config.jsMapName);
-    _str = JSON.stringify(_newMap, null, 2);
-    fs.writeFileSync(_file, _str, 'utf8');
-    return cb();
-  };
-
-
-  /* 推送js到生产目录 并生成最新的hash map */
-
-  jsToDist.prototype.push = function(cb) {
-    var _Map, _cb, _count, _isChange, _jsDistPath, _jsPath, _mapPath, _newMap, _pushJs, _updateMap;
-    _cb = cb || function() {};
-    _jsPath = this.jsPath;
-    _jsDistPath = this.jsDistPath;
-    _mapPath = this.mapPath;
-    _isChange = this.isChange;
-    _updateMap = this.updateMap;
-    _count = 0;
-    _Map = this.getMap;
-    _newMap = {};
-    return _pushJs = gulp.src([_jsPath + "*.js"]).pipe(plumber({
-      errorHandler: errrHandler
-    })).pipe(_uglify()).pipe(header(info, {
-      pkg: pkg
-    })).pipe(revall({
-      hashLength: config.hashLength,
-      silent: true
-    })).pipe(gulp.dest(_jsDistPath)).on('data', function(output) {
-      var _name, _soure, result;
-      _soure = String(output.contents);
-      _name = path.basename(output.path);
-      if (_count % 10 === 0) {
-        gutil.log("Waitting...");
-      }
-      result = _isChange(_name);
-      if (result.status) {
-        gutil.log(_name + " is change!!!");
-        _newMap[result.key] = result.valule;
-      }
-      return _count++;
-    }).pipe(revall.manifest({
-      fileName: config.jsMapName
-    })).pipe(gulp.dest(_mapPath)).on('end', function() {
-      return _updateMap(_newMap, function() {
-        return _cb();
-      });
-    });
-  };
-
-  return jsToDist;
-
-})();
-
 exports.dev = jsToDev;
-
-exports.dist = jsToDist;

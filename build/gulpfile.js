@@ -81,15 +81,8 @@ gulp.task('build.less', function() {
   return build.less2css();
 });
 
-
-/*
- * convert hash json to php
- */
-
-gulp.task('build.map', function() {
-  return build.json2php(function() {
-    return gutil.log(color.green('phpMap done!!!!!!!!!'));
-  });
+gulp.task('build.bgmap', function() {
+  return build.bgmap();
 });
 
 
@@ -98,19 +91,17 @@ gulp.task('build.map', function() {
  */
 
 gulp.task('css2dist', function() {
-  return build.css2dist(function() {
-    return gutil.log(color.green('CSS pushed!'));
-  });
+  return build.cssctl(function() {});
 });
 
 gulp.task('js2dist', function() {
-  return build.js2dist(function() {
+  return build.jsctl(function() {
     return gutil.log(color.green('JS pushed!'));
   });
 });
 
 gulp.task('all2dist', function() {
-  return build.all2dist();
+  return build.cssctl();
 });
 
 

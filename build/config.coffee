@@ -24,7 +24,6 @@ phpHashMapPath = cfg.phpHashMapPath
 # 开发环境下，请求静态资源的域名
 cndDomain = cfg.cndDomain
 
-
 module.exports = 
   # 开发环境
   evn: cfg.evn
@@ -73,6 +72,7 @@ module.exports =
   cssDistPath: '../' + theme + '/dist/css/'
   jsDistPath: '../' + theme + '/dist/js/'
   tplDistPath: '../' + theme + '/dist/js/'
+  imgDistPath: '../' + theme + '/img/'
   spriteDistPath: '../' + theme + '/img/sp/'
   cssBgDistPath: '../' + theme + '/img/bg/'
 
@@ -85,7 +85,8 @@ module.exports =
   lessPath: '../' + theme + '/src/less/'
   jsSrcPath: '../' + theme + '/src/js/'
   tplSrcPath: '../' + theme + '/src/tpl/'
-  # tplJsSrcPath: path.join(st_root, 'src/tpl/')
+  imgSrcPath: '../' + theme + '/src/_img/'
+  
   spriteSrcPath: '../' + theme + '/src/sprite/'
   spriteLessOutPath: '../' + theme + '/src/less/sprite/'
   spriteImgOutPath: '../' + theme + '/src/_img/sp/'
@@ -96,6 +97,7 @@ module.exports =
   jsMapName : 'jsmap.json'
   cssMapName : 'cssmap.json'
   spMapName : 'spmap.json'
+  cssBgMap : 'cssbgmap.json'
 
   # 一个大坑啊。。。
   watchFiles: [

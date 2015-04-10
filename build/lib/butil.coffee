@@ -16,7 +16,7 @@ _url = require "url"
 http = require "http"
 https = require "https"
 queryStr = require "querystring"
-
+crypto   = require 'crypto'
 
 Tools = {}
 # md5 hash

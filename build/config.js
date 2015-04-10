@@ -46,6 +46,7 @@ module.exports = {
   cssDistPath: '../' + theme + '/dist/css/',
   jsDistPath: '../' + theme + '/dist/js/',
   tplDistPath: '../' + theme + '/dist/js/',
+  imgDistPath: '../' + theme + '/img/',
   spriteDistPath: '../' + theme + '/img/sp/',
   cssBgDistPath: '../' + theme + '/img/bg/',
   cssOutPath: '../' + theme + '/src/_css/',
@@ -54,6 +55,7 @@ module.exports = {
   lessPath: '../' + theme + '/src/less/',
   jsSrcPath: '../' + theme + '/src/js/',
   tplSrcPath: '../' + theme + '/src/tpl/',
+  imgSrcPath: '../' + theme + '/src/_img/',
   spriteSrcPath: '../' + theme + '/src/sprite/',
   spriteLessOutPath: '../' + theme + '/src/less/sprite/',
   spriteImgOutPath: '../' + theme + '/src/_img/sp/',
@@ -62,5 +64,6 @@ module.exports = {
   jsMapName: 'jsmap.json',
   cssMapName: 'cssmap.json',
   spMapName: 'spmap.json',
+  cssBgMap: 'cssbgmap.json',
   watchFiles: ['../' + theme + '/src/js/**/*.js', '../' + theme + '/src/sprite/**/*.png', '../' + theme + '/src/less/**/*.less', '../' + theme + '/src/tpl/**/*.html', '../' + theme + '/src/html/**/*.html', '!../' + theme + '/src/**/.DS_Store']
 };

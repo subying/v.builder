@@ -44,8 +44,14 @@ minhtml = (data)->
                        .replace(/>([\n\s+]*?)</g,'><')
     fs.writeFileSync path.join(htmlPath, _name), _soure, 'utf8'
 
-module.exports = (file)->
-    files = file or "#{htmlSrc}**/*.html"
+
+htmlctl = (file,cb)->
+    if typeof file is 'function'
+        files = "#{htmlSrc}**/*.html"
+        cb = file or ->
+    else
+        files = file or "#{htmlSrc}**/*.html"
+        cb = cb or ->
     jsmap = getJSONSync path.join(_mapPath,_jsMapName)
     cssmap = getJSONSync path.join(_mapPath,_cssMapName)
     hashMaps = butil.objMixin jsmap,cssmap
@@ -65,15 +71,17 @@ module.exports = (file)->
                 src: config.jsOutPath
                 dist: config.jsDistPath
         hashmap: hashMaps
-        context:
-            combo_css: true
-            combo_js: true
+        # context:
+        #     combo_css: true
+        #     combo_js: true
     gutil.log color.yellow "Combine html templates..."
-    target = gulp.src([files])
+    gulp.src([files])
         .pipe plumber({errorHandler: errrHandler})
         .pipe include(opts)
         .on "data",(data)->
             minhtml(data)   
         .on "end",->
             gutil.log color.green "Html templates done!"
+            cb()
 
+module.exports = htmlctl

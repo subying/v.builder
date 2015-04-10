@@ -1,6 +1,6 @@
 {
 	"evn":"debug",
-    "isCombo":true,
+    "isCombo":false,
     "cndDomain":"static.local",
     "theme":"asset",
     "htmlTplPath": "../demo",

@@ -19,8 +19,7 @@ rjs     = require 'gulp-requirejs'
 plumber = require 'gulp-plumber'
 gutil   = require 'gulp-util'
 color   = gutil.colors
-# jshint  = require 'jshint'
-# JSHINT  = jshint.JSHINT
+
 
 ### 构建AMD模块依赖表的基类 ###
 jsDepBuilder = amdeps.bder
@@ -199,81 +198,81 @@ class jsToDev extends jsDepBuilder
                     gutil.log color.green "All javascript combined!"
                     _cb()
 
-###
-# js生产文件的构建类
-###
-class jsToDist
-    # constructor: (@prefix) ->
-    jsPath:  config.jsOutPath
-    jsDistPath: config.jsDistPath
-    mapPath: config.mapPath
-    getMap: butil.getJSONSync path.join(config.mapPath, config.jsMapName)
-    getOldMap: butil.getJSONSync path.join(config.mapPath, "old_" + config.jsMapName)
-    # 读取生产目录中的js文件名，并返回数组
-    jsDistList: =>
-        _jsList = new flctl('.js').getList()
-        return _jsList or []
+# ###
+# # js生产文件的构建类
+# ###
+# class jsToDist
+#     # constructor: (@prefix) ->
+#     jsPath:  config.jsOutPath
+#     jsDistPath: config.jsDistPath
+#     mapPath: config.mapPath
+#     getMap: butil.getJSONSync path.join(config.mapPath, config.jsMapName)
+#     getOldMap: butil.getJSONSync path.join(config.mapPath, "old_" + config.jsMapName)
+#     # 读取生产目录中的js文件名，并返回数组
+#     jsDistList: =>
+#         _jsList = new flctl('.js').getList()
+#         return _jsList or []
 
-    ### 判断js是否有改变 ###
-    isChange:(name)=>
-        _valName = name
-        _keyName = name.split('.')[0] + '.js'
-        _map = @getMap
-        _jsList = @jsDistList()
-        # console.log _distList
-        return {
-            status: not _.has(_map,_keyName) or _map[_keyName].replace('/','') isnt name or name not in _jsList
-            key:_keyName
-            valule: _map[_keyName] or ""
-        }
-    ### 更新上一个版本的js Hash表 ###
-    updateMap:(newMap,cb)=>
-        _map = @getMap
-        _oldMap = @getOldMap
-        _temp = objMixin _map,newMap
-        _newMap = objMixin _oldMap,_temp
-        _file = path.join config.mapPath, "old_" + config.jsMapName
-        _str = JSON.stringify(_newMap, null, 2)
-        fs.writeFileSync _file, _str, 'utf8'
-        cb()
+#     ### 判断js是否有改变 ###
+#     isChange:(name)=>
+#         _valName = name
+#         _keyName = name.split('.')[0] + '.js'
+#         _map = @getMap
+#         _jsList = @jsDistList()
+#         # console.log _distList
+#         return {
+#             status: not _.has(_map,_keyName) or _map[_keyName].replace('/','') isnt name or name not in _jsList
+#             key:_keyName
+#             valule: _map[_keyName] or ""
+#         }
+#     ### 更新上一个版本的js Hash表 ###
+#     updateMap:(newMap,cb)=>
+#         _map = @getMap
+#         _oldMap = @getOldMap
+#         _temp = objMixin _map,newMap
+#         _newMap = objMixin _oldMap,_temp
+#         _file = path.join config.mapPath, "old_" + config.jsMapName
+#         _str = JSON.stringify(_newMap, null, 2)
+#         fs.writeFileSync _file, _str, 'utf8'
+#         cb()
 
-    ### 推送js到生产目录 并生成最新的hash map ###
-    push: (cb)=>
-        _cb = cb or ->
-        _jsPath  =  @jsPath
-        _jsDistPath = @jsDistPath
-        _mapPath = @mapPath      
-        _isChange = @isChange
-        _updateMap = @updateMap
-        _count = 0
-        _Map = @getMap
-        _newMap = {}
-        _pushJs = gulp.src [_jsPath + "*.js"]
-            .pipe plumber({errorHandler: errrHandler})
-            .pipe _uglify() 
-            .pipe header(info, { pkg : pkg })
-            .pipe revall({
-                    hashLength: config.hashLength
-                    silent: true
-                })
-            .pipe gulp.dest(_jsDistPath)
-            .on 'data',(output)->
-                _soure = String(output.contents)
-                _name = path.basename output.path
-                gutil.log "Waitting..." if _count%10 is 0
-                result = _isChange(_name)
-                if result.status
-                    gutil.log "#{_name} is change!!!"
-                    _newMap[result.key] = result.valule
-                    # _outPath = _jsDistPath + _name
-                    # fs.writeFileSync _outPath, _soure, 'utf8'
-                _count++
-            .pipe revall.manifest({ fileName: config.jsMapName })
-            .pipe gulp.dest(_mapPath)   
-            .on 'end', ->
-                _updateMap _newMap,->
-                    _cb()
+#     ### 推送js到生产目录 并生成最新的hash map ###
+#     push: (cb)=>
+#         _cb = cb or ->
+#         _jsPath  =  @jsPath
+#         _jsDistPath = @jsDistPath
+#         _mapPath = @mapPath      
+#         _isChange = @isChange
+#         _updateMap = @updateMap
+#         _count = 0
+#         _Map = @getMap
+#         _newMap = {}
+#         _pushJs = gulp.src [_jsPath + "*.js"]
+#             .pipe plumber({errorHandler: errrHandler})
+#             .pipe _uglify() 
+#             .pipe header(info, { pkg : pkg })
+#             .pipe revall({
+#                     hashLength: config.hashLength
+#                     silent: true
+#                 })
+#             .pipe gulp.dest(_jsDistPath)
+#             .on 'data',(output)->
+#                 _soure = String(output.contents)
+#                 _name = path.basename output.path
+#                 gutil.log "Waitting..." if _count%10 is 0
+#                 result = _isChange(_name)
+#                 if result.status
+#                     gutil.log "#{_name} is change!!!"
+#                     _newMap[result.key] = result.valule
+#                     # _outPath = _jsDistPath + _name
+#                     # fs.writeFileSync _outPath, _soure, 'utf8'
+#                 _count++
+#             .pipe revall.manifest({ fileName: config.jsMapName })
+#             .pipe gulp.dest(_mapPath)   
+#             .on 'end', ->
+#                 _updateMap _newMap,->
+#                     _cb()
 
 
 exports.dev = jsToDev
-exports.dist = jsToDist
+# exports.dist = jsToDist

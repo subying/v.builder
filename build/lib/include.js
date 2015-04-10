@@ -9,7 +9,8 @@ var concat = require('concat-stream'),
     es = require('event-stream'),
     gutil = require('gulp-util'),
     path = require('path'),
-    fs = require('fs');
+    fs = require('fs'),
+    _ = require('lodash');
 
 module.exports = function(options) {
     var prefix, basepath, filters, hashmap, evn, isCombo, staticRoot, staticPaths, context;
@@ -106,14 +107,17 @@ module.exports = function(options) {
         for (var i = 0; i < tempArr.length; i++) {
             if (type.indexOf('css') === 0) {
                 _val = tempArr[i]+".css";
-                _name = (evn==="dev" || evn==="debug" || hashmap[_val]==="") ? _val+cacheStr : hashmap[_val].replace('/','');
+                // console.log( _.has(hashmap,_val) )
+                _name = _.has(hashmap,_val) && !(evn==="dev" || evn==="debug") ? hashmap[_val].distname : _val + cacheStr;
+                
                 _str += '<link href="' + staticRoot + css_path + _name + '" rel="stylesheet" type="text/css">';
             }else if (type.indexOf('js') === 0) {
-                if(evn==='dev'){
+                if(evn==='dev' && type==='js'){
                   _str = '<script src="'+ staticRoot +'libs/require/require.js?_v2.4"></script><script src="'+ staticRoot +'libs/jquery/jquery.min.js?_v2.4"></script><script src="'+ staticRoot + js_path.replace("/_js","/js") +'config.js'+cacheStr+'"></script>';
                 }else{
                   _val = tempArr[i]+".js";
-                  _name = (evn==="debug" || hashmap[_val]==="") ? _val+cacheStr : hashmap[_val].replace('/','');
+                  // console.log( _.has(hashmap,_val) )
+                  _name = _.has(hashmap,_val) && !(evn==="dev" || evn==="debug") ? hashmap[_val].distname : _val + cacheStr;
                   _str += '<script src="' + staticRoot + js_path + _name + '" id="' + tempArr[i] + '"></script>';
                 }
             }

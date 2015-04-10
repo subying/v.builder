@@ -7,7 +7,7 @@
  * @link http://pjg.pw
  * @version $Id$
  */
-var autowatch, binit, butil, color, config, crypto, cssToDist, cssbd, flctl, fs, gulp, gutil, htmlCtl, htmlToJs, jsToDev, jsToDist, jsonToPhp, jsto, path, revall, swig;
+var autowatch, binit, butil, color, config, crypto, cssCtl, cssbd, flctl, fs, gulp, gutil, htmlCtl, htmlToJs, jsToDev, jsonToPhp, jsto, path, revall, swig;
 
 fs = require('fs');
 
@@ -44,11 +44,11 @@ htmlToJs = require('./html2js');
 
 jsonToPhp = require('./json2php');
 
-cssToDist = require('./cssto');
-
 autowatch = require('./autowatch');
 
 htmlCtl = require('./htmlctl');
+
+cssCtl = require('./cssctl');
 
 
 /*
@@ -118,6 +118,8 @@ exports.files = {
 
 exports.sprite = cssbd.sp2less;
 
+exports.bgmap = binit.bgmap;
+
 
 /*
  * LESS into CSS
@@ -130,7 +132,7 @@ exports.less2css = cssbd.less2css;
  * 生成css的生产文件
  */
 
-exports.css2dist = cssToDist;
+exports.cssctl = cssCtl;
 
 
 /*
@@ -147,8 +149,6 @@ exports.jsLibPaths = binit.lib;
 exports.config = binit.cfg;
 
 jsToDev = jsto.dev;
-
-jsToDist = jsto.dist;
 
 
 /*
@@ -182,20 +182,14 @@ exports.tpl2dev = function(cb) {
  * 将debug目录中AMD js包文件push到生产目录
  */
 
-exports.js2dist = new jsToDist().push;
+exports.jsctl = require('./jsctl');
 
 
 /*
  * 构建js/css生产文件的Hash表
  */
 
-exports.json2php = function(cb) {
-  var _cb;
-  _cb = cb || function() {};
-  return jsonToPhp(function() {
-    return _cb();
-  });
-};
+exports.json2php = jsonToPhp;
 
 
 /*
@@ -209,10 +203,7 @@ exports.all2dist = function(cb) {
     gutil.log(color.green('CSS pushed!'));
     return exports.js2dist(function() {
       gutil.log(color.green('JS pushed!'));
-      return exports.json2php(function() {
-        gutil.log(color.green('phpMap done!!!!!!!!!'));
-        return _cb();
-      });
+      return _cb();
     });
   });
 };

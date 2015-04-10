@@ -147,8 +147,8 @@ _pushCss = (done)->
 _css2dist = (cb)->
     _cb = cb or ->
     _pushCss (data)->
-        console.log _cssBgImg
-        console.log _cssSpImg
+        # console.log _cssBgImg
+        # console.log _cssSpImg
         _updateMap '.css',data,->
             _pushImg _cssBgImg,_cssBgDistPath,->
                 gutil.log 'CSS bg pushed'

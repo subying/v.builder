@@ -38,7 +38,7 @@ class jsDepBuilder
         _depArrRegex = @depArrRegex
         _filePath = path.join(file_path, file_name)
         _jscontents = fs.readFileSync(_filePath, 'utf8').toString()
-        _jscontents.replace _amdRegex,  (str, map)-> 
+        _jscontents.replace _amdRegex, (str, map)-> 
             depStr = map.replace _depArrRegex, "$1"
             if /^\[/.test(depStr)
                 arr = tryEval depStr
@@ -71,8 +71,6 @@ class jsDepBuilder
                                     # console.log "#{v}/#{f}/#{name_lv2}"
                                     fileDep = _oneJsDep(jsPath_lv2,ff)
                                     depMap["#{v}/#{f}/#{name_lv2}"] = fileDep
-
-
 
         return depMap
 
@@ -120,7 +118,7 @@ class jsDepBuilder
             allDeps: _allDeps
             depLibs: _depLibs
         }
-    # 生成包含某个指定模块的模块队列
+    # 生成某个模块的相关模块列表
     makeRelateList: (module_name) =>
         _module_name = module_name
         if _module_name.indexOf("/") is -1 or _module_name.indexOf('.') is 0

@@ -54,25 +54,21 @@ gulp.task 'build.sp', ->
 gulp.task 'build.less', ->
     build.less2css()
 
-###
-# convert hash json to php
-###
-gulp.task 'build.map', ->
-    build.json2php ->
-        gutil.log color.green 'phpMap done!!!!!!!!!'
-        
+gulp.task 'build.bgmap', ->
+    build.bgmap()
 
 ###
 # push all files to dist
 ###
 gulp.task 'css2dist', ->
-    build.css2dist ->
-        gutil.log color.green 'CSS pushed!'
+    build.cssctl ->
+        
 gulp.task 'js2dist', ->
-    build.js2dist ->
+    build.jsctl ->
         gutil.log color.green 'JS pushed!'
 gulp.task 'all2dist', ->
-    build.all2dist()
+    # build.all2dist()
+    build.cssctl()
 
 ###
 # Injecting static files relative to PHP-tpl files

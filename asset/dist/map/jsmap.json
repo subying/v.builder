@@ -1,13 +1,42 @@
 {
-  "sm.common_header.js": "/sm.common_header.0e06c25b9e.js",
-  "sm.core_libs.js": "/sm.core_libs.c7a3664ea2.js",
-  "sm.ggmod_poptips.js": "/sm.ggmod_poptips.8e0f49e7a8.js",
-  "sm.index_mod.js": "/sm.index_mod.8f1895044a.js",
-  "sm.mods_ibar_main.js": "/sm.mods_ibar_main.d9bb5beaa6.js",
-  "sm.mods_ibar_slide.js": "/sm.mods_ibar_slide.605feacdf3.js",
-  "sm.mods_ibar_slider.js": "/sm.mods_ibar_slider.ea9c5d52b4.js",
-  "sm.mods_ibar_tplinit.js": "/sm.mods_ibar_tplinit.70745779f2.js",
-  "sm.mods_index_main.js": "/sm.mods_index_main.f51b70068f.js",
-  "sm.mods_index_slider.js": "/sm.mods_index_slider.5ecf176658.js",
-  "sm.mods_index_vmctrl.js": "/sm.mods_index_vmctrl.184cbc55c8.js"
+  "sm.common_header.js": {
+    "hash": "c6752a4bc625b72a9fbf3226583c1130",
+    "distname": "sm.common_header.c6752a4bc6.js"
+  },
+  "sm.core_libs.js": {
+    "hash": "48565f414797e45e197deb8fe16703f5",
+    "distname": "sm.core_libs.48565f4147.js"
+  },
+  "sm.ggmod_poptips.js": {
+    "hash": "afee9e56e34e505f20f19aed81fef2e2",
+    "distname": "sm.ggmod_poptips.afee9e56e3.js"
+  },
+  "sm.index_mod.js": {
+    "hash": "f5179752c441a32266bc82edc01c8c0b",
+    "distname": "sm.index_mod.f5179752c4.js"
+  },
+  "sm.mods_ibar_main.js": {
+    "hash": "70c8323ba822a3c3affc02f7b6e4c2b6",
+    "distname": "sm.mods_ibar_main.70c8323ba8.js"
+  },
+  "sm.mods_ibar_tplinit.js": {
+    "hash": "0de47107083252000b87a00e115b1e12",
+    "distname": "sm.mods_ibar_tplinit.0de4710708.js"
+  },
+  "sm.mods_index_main.js": {
+    "hash": "19b53c85873474795f00497d2d5639fd",
+    "distname": "sm.mods_index_main.19b53c8587.js"
+  },
+  "sm.mods_index_slider.js": {
+    "hash": "8d8de5fce393a688a364d96533ecc588",
+    "distname": "sm.mods_index_slider.8d8de5fce3.js"
+  },
+  "sm.mods_index_vmctrl.js": {
+    "hash": "efe51621cb9a19f2750d41a40d05a5ec",
+    "distname": "sm.mods_index_vmctrl.efe51621cb.js"
+  },
+  "stat.js": {
+    "hash": "198ceccee75478472e4623d3b9943221",
+    "distname": "stat.198ceccee7.js"
+  }
 }

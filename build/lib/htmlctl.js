@@ -3,7 +3,7 @@
 /*
  * 服务端html模板构建和压缩模块
  */
-var _cssMapName, _cssPath, _jsMapName, _jsPath, _mapPath, butil, color, config, errrHandler, evn, fs, getJSONSync, gulp, gutil, htmlPath, htmlSrc, include, isCombo, minhtml, path, plumber;
+var _cssMapName, _cssPath, _jsMapName, _jsPath, _mapPath, butil, color, config, errrHandler, evn, fs, getJSONSync, gulp, gutil, htmlPath, htmlSrc, htmlctl, include, isCombo, minhtml, path, plumber;
 
 fs = require('fs');
 
@@ -59,9 +59,15 @@ minhtml = function(data) {
   return fs.writeFileSync(path.join(htmlPath, _name), _soure, 'utf8');
 };
 
-module.exports = function(file) {
-  var cssmap, files, hashMaps, jsmap, opts, target;
-  files = file || (htmlSrc + "**/*.html");
+htmlctl = function(file, cb) {
+  var cssmap, files, hashMaps, jsmap, opts;
+  if (typeof file === 'function') {
+    files = htmlSrc + "**/*.html";
+    cb = file || function() {};
+  } else {
+    files = file || (htmlSrc + "**/*.html");
+    cb = cb || function() {};
+  }
   jsmap = getJSONSync(path.join(_mapPath, _jsMapName));
   cssmap = getJSONSync(path.join(_mapPath, _cssMapName));
   hashMaps = butil.objMixin(jsmap, cssmap);
@@ -81,18 +87,17 @@ module.exports = function(file) {
         dist: config.jsDistPath
       }
     },
-    hashmap: hashMaps,
-    context: {
-      combo_css: true,
-      combo_js: true
-    }
+    hashmap: hashMaps
   };
   gutil.log(color.yellow("Combine html templates..."));
-  return target = gulp.src([files]).pipe(plumber({
+  return gulp.src([files]).pipe(plumber({
     errorHandler: errrHandler
   })).pipe(include(opts)).on("data", function(data) {
     return minhtml(data);
   }).on("end", function() {
-    return gutil.log(color.green("Html templates done!"));
+    gutil.log(color.green("Html templates done!"));
+    return cb();
   });
 };
+
+module.exports = htmlctl;

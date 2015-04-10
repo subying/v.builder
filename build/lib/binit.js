@@ -3,7 +3,8 @@
 /*
  * 项目初始化
  */
-var _, butil, color, config, fs, gutil, init, path;
+var Imagemin, _, butil, color, config, fs, gutil, init, md5, path, rename,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 fs = require('fs');
 
@@ -11,13 +12,19 @@ path = require('path');
 
 _ = require('lodash');
 
+Imagemin = require('imagemin');
+
 gutil = require('gulp-util');
 
 color = gutil.colors;
 
+rename = require('gulp-rename');
+
 butil = require('./butil');
 
 config = require('../config');
+
+md5 = butil.md5;
 
 init = {};
 
@@ -76,7 +83,7 @@ init.lib = function(cb) {
       return fs.readdirSync(jsLibPath).forEach(function(f) {
         var jsPath;
         jsPath = path.join(jsLibPath, f);
-        if (fs.statSync(jsPath).isFile() && f.indexOf('.js') !== -1 && f.indexOf('.') !== 0) {
+        if (fs.statSync(jsPath).isFile() && f.indexOf('.') !== 0 && f.indexOf('.js') !== -1) {
           return namePaths[v] = "../../../libs/" + v + "/" + (f.replace('.js', ''));
         }
       });
@@ -87,6 +94,53 @@ init.lib = function(cb) {
   !fs.existsSync(dataPath) && butil.mkdirsSync(dataPath);
   fs.writeFileSync(path.join(dataPath, 'jslib.paths.json'), jsonData, 'utf8');
   gutil.log(color.green("jslib.paths.json build success"));
+  return _cb();
+};
+
+
+/*
+ * build images
+ */
+
+init.bgmap = function(cb) {
+  var _cb, _imgSrcPath, _map, jsonData, makePaths;
+  _cb = cb || function() {};
+  _map = {};
+  _imgSrcPath = config.imgSrcPath;
+  console.log(_imgSrcPath);
+  makePaths = function(sup_path) {
+    var _ext, _sup_path;
+    _sup_path = sup_path || _imgSrcPath;
+    _ext = ['.png', '.jpg', '.gif'];
+    return fs.readdirSync(_sup_path).forEach(function(v) {
+      var _distname, _hash, _imgmin, _name, _str, _this_ext, ref, sub_Path;
+      sub_Path = path.join(_sup_path, v);
+      if (fs.statSync(sub_Path).isDirectory()) {
+        return makePaths(sub_Path);
+      } else if (fs.statSync(sub_Path).isFile() && v.indexOf('.') !== 0 && (ref = path.extname(sub_Path), indexOf.call(_ext, ref) >= 0)) {
+        _name = sub_Path.replace(_imgSrcPath, '');
+        _this_ext = path.extname(_name);
+        _str = String(fs.readFileSync(sub_Path, 'utf8'));
+        _hash = md5(_str);
+        _distname = _name.replace(_this_ext, '.') + _hash.substring(0, config.hashLength) + _this_ext;
+        _map[_name] = {};
+        _map[_name].hash = _hash;
+        _map[_name].distname = _distname;
+        _imgmin = new Imagemin().src(sub_Path).dest(config.imgDistPath).use(rename(_distname));
+        return _imgmin.run(function(err, files) {
+          err && (function() {
+            throw err;
+          })();
+          return console.log(files[0].path);
+        });
+      }
+    });
+  };
+  makePaths(config.imgSrcPath);
+  jsonData = JSON.stringify(_map, null, 2);
+  !fs.existsSync(config.mapPath) && butil.mkdirsSync(config.mapPath);
+  fs.writeFileSync(path.join(config.mapPath, config.cssBgMap), jsonData, 'utf8');
+  gutil.log(color.green(config.cssBgMap + " build success"));
   return _cb();
 };
 

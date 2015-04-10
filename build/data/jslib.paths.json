@@ -1,5 +1,5 @@
 {
-    "almond": "../../../libs/almond/almond",
+    "almond": "../../../libs/almond/loader",
     "base64": "../../../libs/base64/base64.min",
     "jquery": "../../../libs/jquery/jquery.min",
     "require": "../../../libs/require/require",

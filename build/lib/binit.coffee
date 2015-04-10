@@ -5,12 +5,15 @@
 fs      = require 'fs'
 path    = require 'path'
 _       = require 'lodash'
+Imagemin = require 'imagemin'
 gutil   = require 'gulp-util'
 color   = gutil.colors
 
-
+rename = require 'gulp-rename'
 butil   = require './butil'
 config  = require '../config'
+
+md5     = butil.md5
 init = {}
 
 ###
@@ -71,7 +74,7 @@ init.lib = (cb)->
         if fs.statSync(jsLibPath).isDirectory()
             fs.readdirSync(jsLibPath).forEach (f)->
                 jsPath = path.join(jsLibPath, f)
-                if fs.statSync(jsPath).isFile() and f.indexOf('.js') != -1 and f.indexOf('.') != 0 
+                if fs.statSync(jsPath).isFile() and f.indexOf('.') != 0 and f.indexOf('.js') != -1
                     namePaths[v] = "../../../libs/#{v}/#{f.replace('.js', '')}"
     jsonData = JSON.stringify namePaths, null, 4
     # gutil.log jsonData
@@ -79,6 +82,51 @@ init.lib = (cb)->
     not fs.existsSync(dataPath) and butil.mkdirsSync(dataPath)
     fs.writeFileSync path.join(dataPath, 'jslib.paths.json'), jsonData, 'utf8'
     gutil.log color.green "jslib.paths.json build success"
+    _cb()
+
+###
+# build images
+###
+init.bgmap = (cb)->
+    _cb = cb or ->
+    _map = {}
+    
+    _imgSrcPath = config.imgSrcPath
+    console.log _imgSrcPath
+    # 递归输出文件的路径Tree和hash
+    makePaths = (sup_path)->
+        _sup_path = sup_path or _imgSrcPath
+        _ext = ['.png','.jpg','.gif']
+        fs.readdirSync(_sup_path).forEach (v)->
+            sub_Path = path.join(_sup_path, v)
+            if fs.statSync(sub_Path).isDirectory()
+                makePaths(sub_Path)
+            else if fs.statSync(sub_Path).isFile() and v.indexOf('.') != 0 and path.extname(sub_Path) in _ext
+                # console.log sub_Path
+                _name = sub_Path.replace(_imgSrcPath,'')
+                # console.log _name
+                _this_ext = path.extname(_name)
+                _str = String fs.readFileSync(sub_Path, 'utf8')
+                _hash = md5(_str)
+                _distname = _name.replace(_this_ext,'.') + _hash.substring(0,config.hashLength) + _this_ext
+                _map[_name] = {}
+                _map[_name].hash = _hash
+                _map[_name].distname = _distname
+                _imgmin = new Imagemin()
+                    .src(sub_Path)
+                    .dest(config.imgDistPath)
+                    .use(rename(_distname))
+
+                _imgmin.run (err, files) ->
+                        err and throw err
+                        console.log(files[0].path)
+
+    makePaths(config.imgSrcPath)
+    jsonData = JSON.stringify _map, null, 2
+    
+    not fs.existsSync(config.mapPath) and butil.mkdirsSync(config.mapPath)
+    fs.writeFileSync path.join(config.mapPath, config.cssBgMap), jsonData, 'utf8'
+    gutil.log color.green "#{config.cssBgMap} build success"
     _cb()
 
 ###

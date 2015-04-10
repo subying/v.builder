@@ -1,9 +1,7 @@
 /*==================================================
- Copyright (c) 2013-2015 金戈铁马 and other contributors
- 
+ smcore.js 1.41
+ Copyright (c) 2015 金戈铁马 and other contributors
  Released under the MIT license
- smcore.js 1.41 built in 2015.3.29
- support IE6+ and other browsers
  ==================================================*/
 (function(global, factory) {
 

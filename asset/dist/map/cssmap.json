@@ -1,5 +1,14 @@
 {
-  "common.css": "/common.b8d1fc705a.css",
-  "index.css": "/index.048319c165.css",
-  "newhome.css": "/newhome.116ab313d8.css"
+  "common.css": {
+    "hash": "2fd196c34d37a64c654e361a6eaad9fa",
+    "distname": "common.2fd196c34d.css"
+  },
+  "index.css": {
+    "hash": "6d2d8eb07f21db967a8f7ed0d38ae1c3",
+    "distname": "index.6d2d8eb07f.css"
+  },
+  "newhome.css": {
+    "hash": "55d9fee5e28a45f9adc8aafc95ea0c97",
+    "distname": "newhome.55d9fee5e2.css"
+  }
 }

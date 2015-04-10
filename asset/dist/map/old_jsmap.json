@@ -7,5 +7,9 @@
   "sm.mods_ibar_main.js": "/sm.mods_ibar_main.88aadb26e4.js",
   "sm.mods_ibar_tplinit.js": "/sm.mods_ibar_tplinit.70745779f2.js",
   "sm.mods_index_main.js": "/sm.mods_index_main.b8a35a99ce.js",
-  "sm.mods_index_vmctrl.js": "/sm.mods_index_vmctrl.27588190ba.js"
+  "sm.mods_index_vmctrl.js": "/sm.mods_index_vmctrl.27588190ba.js",
+  "sm.mods_ibar_slide.js": "/sm.mods_ibar_slide.605feacdf3.js",
+  "sm.mods_ibar_slider.js": "/sm.mods_ibar_slider.ea9c5d52b4.js",
+  "sm.mods_index_slider.js": "/sm.mods_index_slider.5ecf176658.js",
+  "smcore.js": ""
 }
