@@ -90,9 +90,8 @@ init.lib = (cb)->
 init.bgmap = (cb)->
     _cb = cb or ->
     _map = {}
-    
     _imgSrcPath = config.imgSrcPath
-    console.log _imgSrcPath
+    # console.log _imgSrcPath
     # 递归输出文件的路径Tree和hash
     makePaths = (sup_path)->
         _sup_path = sup_path or _imgSrcPath
@@ -119,7 +118,7 @@ init.bgmap = (cb)->
 
                 _imgmin.run (err, files) ->
                         err and throw err
-                        console.log(files[0].path)
+                        # console.log(files[0].path)
 
     makePaths(config.imgSrcPath)
     jsonData = JSON.stringify _map, null, 2

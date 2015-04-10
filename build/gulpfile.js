@@ -106,9 +106,11 @@ gulp.task('js2dist', function() {
  */
 
 gulp.task('html2dist', function() {
-  return build.cssctl(function() {
-    return build.jsctl(function() {
-      return build.htmlctl();
+  return build.bgmap(function() {
+    return build.cssctl(function() {
+      return build.jsctl(function() {
+        return build.htmlctl();
+      });
     });
   });
 });
@@ -165,14 +167,10 @@ gulp.task('default', [], function() {
         return build.config(function() {
           return build.tpl2dev(function() {
             return build.js2dev(function() {
-              return build.cssctl(function() {
-                return build.jsctl(function() {
-                  return build.htmlctl(function() {
-                    return setTimeout(function() {
-                      return gulp.start(['watch']);
-                    }, 2000);
-                  });
-                });
+              return build.all2dist(function() {
+                return setTimeout(function() {
+                  return gulp.start(['watch']);
+                }, 2000);
               });
             });
           });
@@ -193,12 +191,8 @@ gulp.task('release', ['del.dist'], function() {
       return build.jsLibPaths(function() {
         return build.tpl2dev(function() {
           return build.js2dev(function() {
-            return build.cssctl(function() {
-              return build.jsctl(function() {
-                return build.htmlctl(function() {
-                  return gutil.log("Finished", '\'' + color.cyan('Release') + '\'.');
-                });
-              });
+            return build.all2dist(function() {
+              return gutil.log("Finished", '\'' + color.cyan('Release') + '\'.');
             });
           });
         });

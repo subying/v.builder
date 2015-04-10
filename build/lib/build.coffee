@@ -127,28 +127,25 @@ exports.tpl2dev = (cb)->
 ###
 # exports.js2dist = new jsToDist().push
 exports.jsctl = require './jsctl'
+
 ###
 # 构建js/css生产文件的Hash表
 ###
 exports.json2php = jsonToPhp
+
+# 将静态资源注入到php模板文件中
+exports.htmlctl = htmlCtl
 
 ###
 # all file to dist
 ###
 exports.all2dist = (cb)->
     _cb = cb or ->
-    exports.css2dist ->
-        gutil.log color.green 'CSS pushed!'
-        exports.js2dist ->
-            gutil.log color.green 'JS pushed!'
-            _cb()
-            # exports.json2php ->
-            #     gutil.log color.green 'phpMap done!!!!!!!!!'
-            
-
-
-# 将静态资源注入到php模板文件中
-exports.htmlctl = htmlCtl
+    exports.bgmap ->
+        exports.cssctl ->
+            exports.jsctl ->
+                exports.htmlctl ->
+                    _cb()
 
 ###
 # Auto watch API

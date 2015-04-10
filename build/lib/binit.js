@@ -107,7 +107,6 @@ init.bgmap = function(cb) {
   _cb = cb || function() {};
   _map = {};
   _imgSrcPath = config.imgSrcPath;
-  console.log(_imgSrcPath);
   makePaths = function(sup_path) {
     var _ext, _sup_path;
     _sup_path = sup_path || _imgSrcPath;
@@ -128,10 +127,9 @@ init.bgmap = function(cb) {
         _map[_name].distname = _distname;
         _imgmin = new Imagemin().src(sub_Path).dest(config.imgDistPath).use(rename(_distname));
         return _imgmin.run(function(err, files) {
-          err && (function() {
+          return err && (function() {
             throw err;
           })();
-          return console.log(files[0].path);
         });
       }
     });

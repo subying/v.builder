@@ -191,6 +191,8 @@ exports.jsctl = require('./jsctl');
 
 exports.json2php = jsonToPhp;
 
+exports.htmlctl = htmlCtl;
+
 
 /*
  * all file to dist
@@ -199,16 +201,16 @@ exports.json2php = jsonToPhp;
 exports.all2dist = function(cb) {
   var _cb;
   _cb = cb || function() {};
-  return exports.css2dist(function() {
-    gutil.log(color.green('CSS pushed!'));
-    return exports.js2dist(function() {
-      gutil.log(color.green('JS pushed!'));
-      return _cb();
+  return exports.bgmap(function() {
+    return exports.cssctl(function() {
+      return exports.jsctl(function() {
+        return exports.htmlctl(function() {
+          return _cb();
+        });
+      });
     });
   });
 };
-
-exports.htmlctl = htmlCtl;
 
 
 /*
