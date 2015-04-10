@@ -66,15 +66,15 @@ gulp.task 'css2dist', ->
 gulp.task 'js2dist', ->
     build.jsctl ->
         gutil.log color.green 'JS pushed!'
-gulp.task 'all2dist', ->
-    # build.all2dist()
-    build.cssctl()
+
 
 ###
 # Injecting static files relative to PHP-tpl files
 ###
 gulp.task 'html2dist', ->
-    build.htmlctl()
+    build.cssctl ->
+        build.jsctl ->
+            build.htmlctl()
 
 ###
 # build bat tool
@@ -121,10 +121,12 @@ gulp.task 'default',[], ->
                 build.config ->
                     build.tpl2dev ->
                         build.js2dev ->
-                            build.htmlctl()
-                            setTimeout ->
-                                gulp.start ['watch']
-                            ,2000
+                            build.cssctl ->
+                                build.jsctl ->
+                                    build.htmlctl ->
+                                        setTimeout ->
+                                            gulp.start ['watch']
+                                        ,2000
 ###
 # release
 ###
@@ -134,8 +136,9 @@ gulp.task 'release',['del.dist'], ->
             build.jsLibPaths ->
                 build.tpl2dev ->
                     build.js2dev -> 
-                        build.htmlctl()
-                        setTimeout ->
-                            gulp.start ['all2dist']
-                        ,1000
+                        build.cssctl ->
+                            build.jsctl ->
+                                build.htmlctl ->
+                                    gutil.log "Finished", '\'' + color.cyan('Release') + '\'.'
+                        
 
