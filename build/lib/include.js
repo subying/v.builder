@@ -1,5 +1,5 @@
 /*
-修改自 gulp-file-include 模块
+ * 修改自 gulp-file-include 模块
  */
 
 'use strict';
@@ -10,8 +10,9 @@ var concat = require('concat-stream'),
     gutil = require('gulp-util'),
     path = require('path'),
     fs = require('fs'),
-    _ = require('lodash');
-
+    _ = require('lodash'),
+    config = require('../config');
+var hashLen = config.hashLength;
 module.exports = function(options) {
     var prefix, basepath, filters, hashmap, evn, isCombo, staticRoot, staticPaths, context;
 
@@ -30,10 +31,11 @@ module.exports = function(options) {
         basepath = '@file';
         context = {};
     }
-    var js_path = ((evn==="dev" || evn==="debug") ? staticPaths['js'].src : staticPaths['js'].dist).replace('../', '');
-    var css_path = ((evn==="dev" || evn==="debug") ? staticPaths['css'].src : staticPaths['css'].dist).replace('../', '');
+    var js_path = (evn==="dev" ? staticPaths['js'].src : staticPaths['js'].dist).replace('../', '');
+    var css_path = (evn==="dev" ? staticPaths['css'].src : staticPaths['css'].dist).replace('../', '');
     var includeRegExp = new RegExp(prefix + 'include\\s*\\([^)]*["\'](.*?)["\'](,\\s*({[\\s\\S]*?})){0,1}\\s*\\)+');
-    // console.log(hashmap);
+    
+    // console.log(js_path);
     function fileInclude(file) {
         var self = this;
 
@@ -102,23 +104,36 @@ module.exports = function(options) {
     function setLinks(type, str) {
         var _str = "";
         var tempArr = str.split(',');
-        var cacheStr = "?v=" +new Date().getTime();
-        var _val,_name;
+        var cacheStr = String(new Date().getTime()).substr(0,hashLen);
+        var _val,_name,_hash;
+        var _requireStr="";
         for (var i = 0; i < tempArr.length; i++) {
             if (type.indexOf('css') === 0) {
                 _val = tempArr[i]+".css";
-                // console.log( _.has(hashmap,_val) )
-                _name = _.has(hashmap,_val) && !(evn==="dev" || evn==="debug") ? hashmap[_val].distname : _val + cacheStr;
+                _hash = (_.has(hashmap,_val) && hashmap[_val]['hash']) ? hashmap[_val]['hash'].substr(0,hashLen) : cacheStr;
+                _name = _.has(hashmap,_val) && !(evn==="dev" || evn==="debug") ? hashmap[_val].distname : _val + "?v=" + _hash.substr();
                 
-                _str += '<link href="' + staticRoot + css_path + _name + '" rel="stylesheet" type="text/css">';
+                _str += '<link href="' + staticRoot + css_path + _name + '" rel="stylesheet" type="text/css">'+'\n';
             }else if (type.indexOf('js') === 0) {
+                // _val = tempArr[i]+".js";
+                // _hash = (_.has(hashmap,_val) && hashmap[_val]['hash']) ? hashmap[_val]['hash'].substr(0,hashLen) : cacheStr;
+                // _name = _.has(hashmap,_val) && !(evn==="dev" || evn==="debug") ? hashmap[_val].distname : _val  + "?v=" + _hash;
+                // _str += '<script src="' + staticRoot + js_path + _name + '" id="' + tempArr[i].replace(/\//g,'_') + '"></script>'+'\n';
+                
                 if(evn==='dev' && type==='js'){
-                  _str = '<script src="'+ staticRoot +'libs/require/require.js?_v2.4"></script><script src="'+ staticRoot +'libs/jquery/jquery.min.js?_v2.4"></script><script src="'+ staticRoot + js_path.replace("/_js","/js") +'config.js'+cacheStr+'"></script>';
+                    if(tempArr[i] !== config.coreJsName){
+                        _requireStr += 'require(["'+ tempArr[i].replace(config.prefix,'').replace(/_/g,'/') +'"]);';
+                    }
+                    _str = '<script src="'+ staticRoot + js_path + 'vendor/require/require.js?_v2.4"></script>'+'\n';
+                    _str += '<script src="'+ staticRoot + js_path + 'vendor/jquery/jquery.js?_v2.4"></script>'+'\n';
+                    _str += '<script src="'+ staticRoot + js_path + 'config.js?v='+cacheStr+'"></script>'+'\n';
+                    _str += '<script>'+_requireStr+'</script>';
                 }else{
                   _val = tempArr[i]+".js";
                   // console.log( _.has(hashmap,_val) )
-                  _name = _.has(hashmap,_val) && !(evn==="dev" || evn==="debug") ? hashmap[_val].distname : _val + cacheStr;
-                  _str += '<script src="' + staticRoot + js_path + _name + '" id="' + tempArr[i] + '"></script>';
+                  _hash = (_.has(hashmap,_val) && hashmap[_val]['hash']) ? hashmap[_val]['hash'].substr(0,hashLen) : cacheStr;
+                  _name = _.has(hashmap,_val) && !(evn==="dev" || evn==="debug") ? hashmap[_val].distname : _val + "?v=" + _hash;
+                  _str += '<script src="' + staticRoot + js_path + _name + '" id="' + tempArr[i] + '"></script>' + '\n';
                 }
             }
         };
@@ -182,7 +197,7 @@ module.exports = function(options) {
                 for (var i = 0; i < keys.length; i++) {
                     var key = keys[i];
                     var val = data[key];
-                    var links = setLinks(key, val);
+                    var links = (val=="") ? val : setLinks(key,val);
                     text = text.replace(new RegExp(prefix + key, 'g'), links ? links : val);
                 }
             }

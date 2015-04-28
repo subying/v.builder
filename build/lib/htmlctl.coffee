@@ -4,64 +4,83 @@
 
 fs      = require 'fs'
 path    = require 'path'
+_       = require 'lodash'
 gulp    = require 'gulp'
 plumber = require 'gulp-plumber'
 gutil   = require 'gulp-util'
 config  = require '../config'
-include = require './include'
 butil   = require './butil'
 getJSONSync = butil.getJSONSync
 errrHandler = butil.errrHandler
 color   = gutil.colors
+include = require './include'
+minifyHTML = require('gulp-minify-html')
 
+cssBgMap = {}
+jsmap = {}
+jsdistmap = {}
+cssmap = {}
 
-evn = config.evn
-isCombo = config.isCombo
-
-htmlPath = config.htmlPath
-htmlSrc = config.htmlSrc
-
-_jsPath = config.jsDistPath
-_cssPath = config.cssDistPath
-_mapPath = config.mapPath
-
-_jsMapName = config.jsMapName
-_cssMapName = config.cssMapName
+try
+    cssBgMap    = getJSONSync path.join(config.mapPath, config.cssBgMap)
+    jsmap       = getJSONSync path.join(config.mapPath,config.jsMapName)
+    jsdistmap   = getJSONSync path.join(config.mapPath,config.jsDistMapName)
+    cssmap      = getJSONSync path.join(config.mapPath,config.cssMapName)
+catch e
+    # ...
+hashMaps = butil.objMixin jsmap,jsdistmap,cssmap
+imgRoot = config.staticRoot + config.imgDistPath.replace('../','')
 
 # 压缩html
-minhtml = (data)->
-    _path = String(data.path)
-    return false if _path.indexOf('src/html/_') isnt -1
-    _name = _path.split('src/html/')[1]
-    _soure = String(data.contents)
-    if evn isnt 'dev' and evn isnt 'debug'
-        _soure = _soure.replace(/<!--([\s\S]*?)-->/g, '')
-                       .replace(/\/\*([\s\S]*?)\*\//g, '')
-                       .replace(/\n/g, '')
-                       .replace(/\t/g, '')
-                       .replace(/\r/g, '')
-                       .replace(/\n\s+/g, ' ')
-                       .replace(/>([\n\s+]*?)</g,'><')
-    fs.writeFileSync path.join(htmlPath, _name), _soure, 'utf8'
+_minhtml = (data)->
+    try
+        _path = String(data.path).replace(/\\/g,'/')
+        return false if _path.indexOf("/#{config.views}_") > -1
+        _name = _path.split("/#{config.theme}/#{config.views}")[1]
+        _outputPath = path.join(config.htmlTplDist, _name)
+        _soure = String(data.contents)
+        imgReg = /<img\s[^(src)]*\s*src="([^"]*)"/g
+        _soure = _soure.replace imgReg,(str,map)->
+            if map.indexOf('http://') isnt -1
+                return str
+            else
+                key = map.replace('_img/', '')
+                         .replace(/(^\'|\")|(\'|\"$)/g, '')
+                val = imgRoot + (if _.has(cssBgMap,key) then cssBgMap[key].distname else key + '?=t' + String(new Date().getTime()).substr(0,8))
+                return str.replace(map, val)
 
+        if config.evn isnt 'dev' and config.evn isnt 'debug'
+            gutil.log color.cyan("\'" + _name + "\'"),"combined."
+            _soure = _soure.replace(/\/\*([\s\S]*?)\*\//g, '')
+                           .replace(/^\s+$/g, '')
+                           # .replace(/\n/g, '')
+                           .replace(/\t/g, '')
+                           # .replace(/\r/g, '')
+                           # .replace(/\n\s+/g, ' ')
+                           # .replace(/\s+/g, ' ')
+                           # .replace(/>([\n\s+]*?)</g,'><')
+                           
+                           
+        butil.mkdirsSync(path.dirname(_outputPath))
+        fs.writeFileSync path.join(_outputPath), _soure, 'utf8'
+    catch e
+        console.log e
 
-htmlctl = (file,cb)->
+module.exports = (file,cb)->
     if typeof file is 'function'
-        files = "#{htmlSrc}**/*.html"
-        cb = file or ->
+        files = "#{config.htmlTplSrc}**/*.html"
+        cb = file
     else
-        files = file or "#{htmlSrc}**/*.html"
+        files = file or "#{config.htmlTplSrc}**/*.html"
         cb = cb or ->
-    jsmap = getJSONSync path.join(_mapPath,_jsMapName)
-    cssmap = getJSONSync path.join(_mapPath,_cssMapName)
-    hashMaps = butil.objMixin jsmap,cssmap
 
+    gutil.log color.yellow "Combine html templates..."
     # html模板引擎配置
     opts = 
         prefix: '@@'
         basepath: '@file'
-        evn: evn
-        isCombo: isCombo
+        evn: config.evn
+        isCombo: config.isCombo
         staticRoot: config.staticRoot
         staticPaths:
             css:
@@ -74,14 +93,14 @@ htmlctl = (file,cb)->
         # context:
         #     combo_css: true
         #     combo_js: true
-    gutil.log color.yellow "Combine html templates..."
+
     gulp.src([files])
         .pipe plumber({errorHandler: errrHandler})
         .pipe include(opts)
+        # .pipe minifyHTML()
         .on "data",(data)->
-            minhtml(data)   
+            _minhtml(data)   
         .on "end",->
             gutil.log color.green "Html templates done!"
             cb()
 
-module.exports = htmlctl

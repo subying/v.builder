@@ -23,13 +23,13 @@ _ = require("lodash");
 
 _url = require("url");
 
+crypto = require("crypto");
+
 http = require("http");
 
 https = require("https");
 
 queryStr = require("querystring");
-
-crypto = require('crypto');
 
 Tools = {};
 

@@ -3,11 +3,13 @@
 /*
  * 服务端html模板构建和压缩模块
  */
-var _cssMapName, _cssPath, _jsMapName, _jsPath, _mapPath, butil, color, config, errrHandler, evn, fs, getJSONSync, gulp, gutil, htmlPath, htmlSrc, htmlctl, include, isCombo, minhtml, path, plumber;
+var _, _minhtml, butil, color, config, cssBgMap, cssmap, e, errrHandler, fs, getJSONSync, gulp, gutil, hashMaps, imgRoot, include, jsdistmap, jsmap, minifyHTML, path, plumber;
 
 fs = require('fs');
 
 path = require('path');
+
+_ = require('lodash');
 
 gulp = require('gulp');
 
@@ -17,8 +19,6 @@ gutil = require('gulp-util');
 
 config = require('../config');
 
-include = require('./include');
-
 butil = require('./butil');
 
 getJSONSync = butil.getJSONSync;
@@ -27,55 +27,79 @@ errrHandler = butil.errrHandler;
 
 color = gutil.colors;
 
-evn = config.evn;
+include = require('./include');
 
-isCombo = config.isCombo;
+minifyHTML = require('gulp-minify-html');
 
-htmlPath = config.htmlPath;
+cssBgMap = {};
 
-htmlSrc = config.htmlSrc;
+jsmap = {};
 
-_jsPath = config.jsDistPath;
+jsdistmap = {};
 
-_cssPath = config.cssDistPath;
+cssmap = {};
 
-_mapPath = config.mapPath;
+try {
+  cssBgMap = getJSONSync(path.join(config.mapPath, config.cssBgMap));
+  jsmap = getJSONSync(path.join(config.mapPath, config.jsMapName));
+  jsdistmap = getJSONSync(path.join(config.mapPath, config.jsDistMapName));
+  cssmap = getJSONSync(path.join(config.mapPath, config.cssMapName));
+} catch (_error) {
+  e = _error;
+}
 
-_jsMapName = config.jsMapName;
+hashMaps = butil.objMixin(jsmap, jsdistmap, cssmap);
 
-_cssMapName = config.cssMapName;
+imgRoot = config.staticRoot + config.imgDistPath.replace('../', '');
 
-minhtml = function(data) {
-  var _name, _path, _soure;
-  _path = String(data.path);
-  if (_path.indexOf('src/html/_') !== -1) {
-    return false;
+_minhtml = function(data) {
+  var _name, _outputPath, _path, _soure, imgReg;
+  try {
+    _path = String(data.path).replace(/\\/g, '/');
+    if (_path.indexOf("/" + config.views + "_") > -1) {
+      return false;
+    }
+    _name = _path.split("/" + config.theme + "/" + config.views)[1];
+    _outputPath = path.join(config.htmlTplDist, _name);
+    _soure = String(data.contents);
+    imgReg = /<img\s[^(src)]*\s*src="([^"]*)"/g;
+    _soure = _soure.replace(imgReg, function(str, map) {
+      var key, val;
+      if (map.indexOf('http://') !== -1) {
+        return str;
+      } else {
+        key = map.replace('_img/', '').replace(/(^\'|\")|(\'|\"$)/g, '');
+        val = imgRoot + (_.has(cssBgMap, key) ? cssBgMap[key].distname : key + '?=t' + String(new Date().getTime()).substr(0, 8));
+        return str.replace(map, val);
+      }
+    });
+    if (config.evn !== 'dev' && config.evn !== 'debug') {
+      gutil.log(color.cyan("\'" + _name + "\'"), "combined.");
+      _soure = _soure.replace(/\/\*([\s\S]*?)\*\//g, '').replace(/^\s+$/g, '').replace(/\t/g, '');
+    }
+    butil.mkdirsSync(path.dirname(_outputPath));
+    return fs.writeFileSync(path.join(_outputPath), _soure, 'utf8');
+  } catch (_error) {
+    e = _error;
+    return console.log(e);
   }
-  _name = _path.split('src/html/')[1];
-  _soure = String(data.contents);
-  if (evn !== 'dev' && evn !== 'debug') {
-    _soure = _soure.replace(/<!--([\s\S]*?)-->/g, '').replace(/\/\*([\s\S]*?)\*\//g, '').replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '').replace(/\n\s+/g, ' ').replace(/>([\n\s+]*?)</g, '><');
-  }
-  return fs.writeFileSync(path.join(htmlPath, _name), _soure, 'utf8');
 };
 
-htmlctl = function(file, cb) {
-  var cssmap, files, hashMaps, jsmap, opts;
+module.exports = function(file, cb) {
+  var files, opts;
   if (typeof file === 'function') {
-    files = htmlSrc + "**/*.html";
-    cb = file || function() {};
+    files = config.htmlTplSrc + "**/*.html";
+    cb = file;
   } else {
-    files = file || (htmlSrc + "**/*.html");
+    files = file || (config.htmlTplSrc + "**/*.html");
     cb = cb || function() {};
   }
-  jsmap = getJSONSync(path.join(_mapPath, _jsMapName));
-  cssmap = getJSONSync(path.join(_mapPath, _cssMapName));
-  hashMaps = butil.objMixin(jsmap, cssmap);
+  gutil.log(color.yellow("Combine html templates..."));
   opts = {
     prefix: '@@',
     basepath: '@file',
-    evn: evn,
-    isCombo: isCombo,
+    evn: config.evn,
+    isCombo: config.isCombo,
     staticRoot: config.staticRoot,
     staticPaths: {
       css: {
@@ -89,15 +113,12 @@ htmlctl = function(file, cb) {
     },
     hashmap: hashMaps
   };
-  gutil.log(color.yellow("Combine html templates..."));
   return gulp.src([files]).pipe(plumber({
     errorHandler: errrHandler
   })).pipe(include(opts)).on("data", function(data) {
-    return minhtml(data);
+    return _minhtml(data);
   }).on("end", function() {
     gutil.log(color.green("Html templates done!"));
     return cb();
   });
 };
-
-module.exports = htmlctl;

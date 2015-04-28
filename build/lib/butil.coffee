@@ -13,10 +13,11 @@ gutil   = require 'gulp-util'
 color   = gutil.colors
 _ = require "lodash"
 _url = require "url"
+crypto = require "crypto"
 http = require "http"
 https = require "https"
 queryStr = require "querystring"
-crypto   = require 'crypto'
+
 
 Tools = {}
 # md5 hash

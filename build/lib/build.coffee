@@ -8,27 +8,21 @@
 
 fs      = require 'fs'
 path    = require 'path'
-crypto  = require 'crypto'
 config  = require '../config'
-swig    = require 'swig'
-gulp    = require 'gulp'
-revall  = require 'gulp-rev-all'
 gutil   = require 'gulp-util'
 color   = gutil.colors
 
 ###引入自定义模块###
-
 binit     = require './binit'
 butil     = require './butil'
 flctl     = require './flctl'
 cssbd     = require './cssbd'
-jsto      = require './jsto'
+cssToDist = require './cssto'
+jsToDev  = require './jsto'
+jsCtl     = require './jsctl'
 htmlToJs  = require './html2js'
-jsonToPhp = require './json2php'
-# cssToDist = require './cssto'
-autowatch = require './autowatch'
 htmlCtl   = require './htmlctl'
-cssCtl    = require './cssctl'
+autowatch = require './autowatch'
 
 
 ###
@@ -77,7 +71,10 @@ exports.files =
 ###
 exports.sprite  = cssbd.sp2less
 
-exports.bgmap = binit.bgmap
+###
+# 生成背景图的map
+###
+exports.bgMap = binit.bgmap
 
 ###
 # LESS into CSS
@@ -87,27 +84,31 @@ exports.less2css = cssbd.less2css
 ###
 # 生成css的生产文件
 ###
-# exports.css2dist = cssToDist
-exports.cssctl = cssCtl
+exports.css2dist = cssToDist
 
-
+###
+# 生成js模块路径
+###
+exports.cssPaths = (cb)->
+    cb = cb or ->
+    binit.paths '.css',cb()
 
 ###
 # 生成第三方模块路径
 ###
-exports.jsLibPaths = binit.lib
+exports.jsLibs = binit.libs
+
+###
+# 生成js模块路径
+###
+exports.jsPaths = (cb)->
+    cb = cb or ->
+    binit.paths '.js',cb()
 
 ###
 # 生成require config 和 ve_cfg
 ###
 exports.config = binit.cfg
-
-jsToDev   = jsto.dev
-# jsToDist  = jsto.dist
-###
-# 合并AMD js模块到debug目录(./src/_js/)
-###
-exports.js2dev = new jsToDev().init
 
 ###
 # 将html生成js模板
@@ -122,30 +123,38 @@ exports.tpl2dev = (cb)->
     gutil.log color.green "Convert success!"
     _cb()
 
+
+
+
+
+# jsToDist  = jsCtl.bder
+###
+# 合并AMD js模块到debug目录(./src/_js/)
+###
+exports.js2dev = jsToDev
+
 ###
 # 将debug目录中AMD js包文件push到生产目录
 ###
-# exports.js2dist = new jsToDist().push
-exports.jsctl = require './jsctl'
+exports.js2dist = new jsCtl.dist().init
 
-###
-# 构建js/css生产文件的Hash表
-###
-exports.json2php = jsonToPhp
-
-# 将静态资源注入到php模板文件中
-exports.htmlctl = htmlCtl
 
 ###
 # all file to dist
 ###
 exports.all2dist = (cb)->
     _cb = cb or ->
-    exports.bgmap ->
-        exports.cssctl ->
-            exports.jsctl ->
-                exports.htmlctl ->
-                    _cb()
+    exports.css2dist ->
+        gutil.log color.green 'CSS pushed!'
+        exports.js2dist ->
+            gutil.log color.green 'JS pushed!'
+            # exports.json2php ->
+            #     gutil.log color.green 'phpMap done!!!!!!!!!'
+            _cb()
+
+# 将静态资源注入到php模板文件中
+exports.htmlctl = htmlCtl
+
 
 ###
 # Auto watch API

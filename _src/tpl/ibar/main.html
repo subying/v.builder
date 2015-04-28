@@ -1,0 +1,78 @@
+<!-- icar主模板 -->
+<div id="iBar" class="ibar" vm-controller="global_ibar">
+    <div class="ibar_main_panel" style="left: 0px;">
+        <ul class="ibar_mp_center">
+            <li class="mpbtn_login">
+                <a href="javascript:;" vm-click="openLogin" vm-mouseleave="hidePanel(2000)">
+                    <s></s><span>登录</span>
+                </a>
+            </li>
+            <li class="mpbtn_cart">
+                <a href="javascript:;" vm-click="openPanel(1)" vm-mouseleave="hidePanel(2000)">
+                    <s></s>
+                    <span class="text">购物车</span>
+                    <span class="cart_num">{{cartInfo.quantity}}</span>
+                </a>
+            </li>
+            <li class="mpbtn_asset">
+                <a href="javascript:;" vm-mouseenter="showTips(-122,-92)" vm-mouseleave="hideTips(-122)"  vm-click="openPanel(4)" vm-mouseleave="hidePanel(2000)">
+                    <s></s><span>我的财产</span>
+                </a>
+                <div class="mp_tooltip">我的财产
+                    <s class="icon_arrow_right_black"></s>
+                </div>
+            </li>
+            <li class="mpbtn_favorite">
+                <a href="javascript:;" vm-mouseenter="showTips(-122,-92)" vm-mouseleave="hideTips(-122)" vm-click="openPanel(2)" vm-mouseleave="hidePanel(2000)">
+                    <s></s><span>我的心愿单</span>
+                </a>
+                <div class="mp_tooltip">我的心愿单
+                    <s class="icon_arrow_right_black"></s>
+                </div>
+            </li>
+            <li class="mpbtn_histroy">
+                <a href="javascript:;" vm-mouseenter="showTips(-122,-92)" vm-mouseleave="hideTips(-122)" vm-click="openPanel(3)" vm-mouseleave="hidePanel(2000)">
+                    <s></s><span>我看过的</span>
+                </a>
+                <div class="mp_tooltip">我看过的
+                    <s class="icon_arrow_right_black"></s>
+                </div>
+            </li>
+            <li class="mpbtn_recharge">
+                <a href="javascript:;" vm-mouseenter="showTips(-122,-92)" vm-mouseleave="hideTips(-122)" vm-click="openPanel(5)" vm-mouseleave="hidePanel(2000)">
+                    <s></s><span class="text">充</span>
+                </a>
+                <div class="mp_tooltip">我要充值
+                    <s class="icon_arrow_right_black"></s>
+                </div>
+            </li>
+        </ul>
+        <ul class="ibar_mp_bottom">
+            <li class="mpbtn_qrcode">
+                <a href="javascript:;" vm-mouseenter="showTips(-188,-168)" vm-mouseleave="hideTips(-188)" vm-click="hidePanel(20)">
+                    <s></s>手机聚美</a>
+                <div class="mp_qrcode">
+                    <img width="148" height="175" src="http://s0.jmstatic.com/templates/jumei/images/ibar/qrcode.png?v=0">
+                    <s class="icon_arrow_white"></s>
+                </div>
+            </li>
+            <li class="mpbtn_support">
+                <a href="javascript:;" vm-mouseenter="showTips(-122,-92)" vm-mouseleave="hideTips(-122)" vm-click="hidePanel(20)">
+                    <s></s>客服中心</a>
+                <div class="mp_tooltip">客服中心
+                    <s class="icon_arrow_right_black"></s>
+                </div>
+            </li>
+            <li id="gotop" class="mpbtn_gotop">
+                <a href="javascript:;" class="btn_gotop" vm-mouseenter="showTips(-122,-92)" vm-mouseleave="hideTips(-122)" vm-click="goTop" vm-click-1="hidePanel(20)" style="visibility: visible;">
+                    <s></s>返回顶部</a>
+                <div class="mp_tooltip">返回顶部
+                    <s class="icon_arrow_right_black"></s>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="ibar_tips_box" vm-include="tpl_tips" data-include-rendered="render" vm-mouseleave="hidePanel(2000)"></div>
+    <div class="ibar_login_box status_login" vm-include="tpl_login" data-include-rendered="render" vm-mouseleave="hidePanel(2000)"></div>
+    <div class="ibar_sub_panel" vm-include="tpl_panel" data-include-rendered="render" vm-mouseenter="openPanel()" vm-mouseleave="hidePanel(2000)"></div>
+</div>

@@ -1,23 +1,18 @@
 {
-    "jquery.cookie" : ["jquery"],
-    "jquery.easing" : ["jquery"],
-    "jquery.slide" : ["jquery"],
-    "jquery.flexslider" : ["jquery"],
-    "jquery.layer" : ["jquery"],
-    "jquery.infinitescroll" : ["jquery"],
-    "jquery.page" : ["jquery"],
-    "jquery.calendar": ["jquery"],
-    "zepto": {
-        "exports": "$"
+    "smcore": {
+        "exports": "smcore"
     },
-    "underscore": {
+    "waypoint":{
+        "deps": ["jquery"],
+        "exports": "$.fn.waypoint"
+    },
+    "cookie": {
+      "deps": [
+        "jquery"
+      ],
+      "exports": "$.cookie"
+    },
+    "underscore":{
         "exports": "_"
-    },
-    "xss": {
-        "exports": "filterXSS"
-    },
-    "avalon": {
-        "exports": "avalon"
     }
-
 }

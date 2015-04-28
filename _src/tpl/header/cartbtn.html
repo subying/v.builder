@@ -1,0 +1,9 @@
+<div class="cart_box" id="cart_box" vm-class="car-current:isOn">
+    <a rel="nofollow" href="http://cart.jumei.com/i/cart/show?from=header_cart" class="cart_link" id="cart" vm-mouseenter="movein" vm-mouseleave="moveout">
+        <img width="28" height="28" class="cart_gif" src="http://p0.jmstatic.com/assets/cart.gif">
+        <span class="text">去购物车结算</span>
+        <span class="num" vm-if="cartInfo.quantity > 0">{{cartInfo.quantity}}</span>
+        <s class="icon_arrow_right"></s>
+    </a>
+    <div id="cart_content" class="cart_content" vm-include="tpl_cart" data-include-rendered="render" vm-mouseenter="movein" vm-mouseleave="moveout"></div>
+</div>

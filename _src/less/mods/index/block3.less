@@ -1,0 +1,213 @@
+/*main*/
+.main{
+  background: url('../img/i-main.png') no-repeat center 25px;
+}
+/* 可公用标题栏目 */
+.m-hd-title{
+  margin-top: 50px;
+  h2{
+    font-weight: normal;
+  }
+  i{
+    .d-ib7();
+    margin-right: 5px;
+    vertical-align: -5px;
+  }
+  strong{
+    margin-right: 5px;
+    font-size: 26px;
+    font-weight: normal;
+    color:#333;
+  }
+  em{
+    font-size: 20px;
+    color: #e73069;
+  }
+  span{
+    font-size: 16px;
+    color:#999;
+  }
+  .icon-snapping{
+   .icon-index-snapping();
+  }
+  .icon-sale{
+    .icon-index-t-sale();
+  }
+}
+// 首页专场倒计时
+.i-time{
+  li{
+    float: left;
+    color: #666;
+    //倒计时背景
+    span{
+      margin: 0 1px;
+      text-align: center;
+      line-height: 28px;
+      color: #fff;
+      font-size: 16px;
+      font-family: arial;
+      display: inline-block;
+      .icon-index-i-time();
+    }
+    //倒计时dot
+    i.time-icon{
+      margin: 0 6px;
+      vertical-align: middle;
+      display: inline-block;
+      .icon-index-dot();
+    }
+  }
+}
+// 爆款、新品tips小图标
+.lab{
+  position: absolute;
+  right: 0;
+  top: 0;
+  i{
+    display: inline-block;
+    &.hot{
+      .icon-index-hot();
+    }
+    &.new{
+      .icon-index-new();
+    }
+  }
+}
+/*限时抢购*/
+.snapping{
+  .i-time{
+    margin: 8px  0 0 15px; 
+  }
+  li.item a{
+    height: 328px;
+  }
+}
+/*今日特卖*/
+.t-sale{
+  li.item a{
+    height: 300px;
+  }
+}
+// 公用items
+.bor0{
+  border: 0 !important;
+}
+.i-bd{
+  margin-top: 15px;
+  li.item{
+    float: left;
+    margin-bottom: 20px;
+    a{
+      display: block;
+      position: relative;
+      zoom: 1;
+      border-right: 1px #eee solid;
+      background: #fff;
+      width: 239px;
+      overflow: hidden;
+    }
+    img{
+      display: block;
+      vertical-align: middle;
+      width: 239px;
+      height: 239px;
+      max-width: 239px;
+      max-height: 239px;
+    }
+    span.tit{
+      display: block;
+      padding: 10px 9px 0 9px;
+      height: 35px;
+      overflow: hidden;
+      font-family: "SimSun","宋体";
+    }
+    .pri{
+      padding: 5px 9px 0 9px;
+      .price{
+        font-family: arial;
+        font-size: 20px;
+        color: #e73069;
+        font-weight: bold;
+        span.rmb{
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  // 今日特卖 品牌item介绍
+  a.item-special{
+    position: relative;
+    text-align: center;
+    img{
+      height: 40px;
+      width: auto;
+      max-height: 40px;
+      max-width: 240px;
+      margin: 30px auto 0;
+    }
+    span.tit{
+      font-size: 14px;
+      font-family: "Microsoft YaHei", "微软雅黑", "SimSun","宋体",Tahoma, Geneva, sans-serif;
+      color: #666;
+      padding: 15px 35px 0 35px;
+      height: 45px;
+      margin-bottom: 15px;
+    }
+    span.discount{
+      color: #ff6060;
+      em{
+        font-size: 30px;
+      }
+    }
+    strong.end-time{
+      position: absolute;
+      bottom: 15px;
+      width: 239px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
+    .tips{
+      .icon-index-tips-bg();
+      color: #ff6060;
+      margin: 28px  auto 0 auto;
+      line-height: 36px;
+      text-indent: -5px;
+      overflow: hidden;
+      em{
+        font-size: 16px;
+        font-weight: bold;
+        font-family: arial;
+      }
+    }
+  }
+  .h18{
+    height: 18px  !important;
+  }
+  .mt20{
+    margin-top: 20px !important;
+  }
+  // 进入专场
+  .go-special{
+    position: relative;
+    i.icon{
+      position: absolute;
+      text-indent: -9999em;
+      top: 120px;
+      left: 40px;
+      .icon-index-go-special();
+
+    }
+  }
+  // 大广告图item模式
+  .big-item{
+    position: relative;
+    zoom: 1;
+    float: left;
+    margin-left: -1px;
+    width: 720px;
+    height: 328px;
+  }
+}

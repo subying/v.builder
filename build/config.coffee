@@ -9,17 +9,15 @@
 path  = require 'path'
 butil = require './lib/butil'
 
+st_root = path.join __dirname
+
+viewsDir = 'html/'
 cfg   = butil.getJSONSync('config.json')
+srcPath = cfg.srcPathName
+distPath = cfg.distPathName
 
-theme = cfg.theme
-
-st_root = path.join __dirname, "..", theme
-
-# PHP的html模板的物理路径，根据各自 PHP项目 的模板路径来修改
-htmlTplPath = cfg.htmlTplPath
-
-# css,js文件的hash地图保存的磁盘路径，根据各自的开发环境来修改
-phpHashMapPath = cfg.phpHashMapPath
+# html模板路径
+htmlTplDist = cfg.htmlTplDist
 
 # 开发环境下，请求静态资源的域名
 cndDomain = cfg.cndDomain
@@ -33,78 +31,72 @@ module.exports =
 
   # 项目的主目录
   rootPath: st_root
+  theme: srcPath
 
   # PHP的模板路径
-  htmlPath: htmlTplPath
-  htmlSrc: '../' + theme + '/src/html/'
+  views: viewsDir
+  htmlTplSrc: path.join "..",srcPath,viewsDir
+  htmlTplDist: htmlTplDist
 
   # js文件前缀
   prefix: cfg.jsPrefix
   # 生产文件的hash长度
   hashLength: cfg.hashLength
-  # 核心js库名，非首页时使用 
-  coreJsName: cfg.jsPrefix + cfg.coreJsName
 
-  # 首页模块生产名
-  indexJsDistName: cfg.jsPrefix + cfg.indexJsName
-  
-  # 首页模块ID
-  indexModuleName: cfg.indexJsModuleID
-  
-  staticRoot: "//" + cndDomain + "/"
-  staticPath: "//" + cndDomain + "/" + theme + "/"
+  # 核心js
+  coreJsName: cfg.jsPrefix + cfg.coreJs.name
+  coreJsMods: cfg.coreJs.mods
 
-
-  # veCfgFileName: 've_cfg'
-  # configName: '_VE_Cfg'
-  # configDate: 
-    
+  staticRoot: "http://" + cndDomain + "/"
+  staticPath: "http://" + cndDomain + "/" + srcPath + "/"
+  cndStaticPath: "http://" + cndDomain + "/" + distPath + "/"
 
   # 一些gulp构建配置
   dataPath: './data'
   spriteDataPath: './data/sp.map.json'
   spriteHasPath: './data/sp.has.json'
 
-  jsLibPath: '../libs/'
-  docOutPath: '../' + theme + '/doc/'
+  jsLibPath: '../' + srcPath + '/js/vendor/'
+  docOutPath: '../' + srcPath + '/doc/'
+  imgSrcPath: '../' + srcPath + '/_img/'
 
   # 文件构建的生产目录
-  cssDistPath: '../' + theme + '/dist/css/'
-  jsDistPath: '../' + theme + '/dist/js/'
-  tplDistPath: '../' + theme + '/dist/js/'
-  imgDistPath: '../' + theme + '/img/'
-  spriteDistPath: '../' + theme + '/img/sp/'
-  cssBgDistPath: '../' + theme + '/img/bg/'
+  cssDistPath: '../' + distPath + '/css/'
+  jsDistPath: '../' + distPath + '/js/'
+  tplDistPath: '../' + distPath + '/js/'
+  imgDistPath: '../' + distPath + '/img/'
+  spriteDistPath: '../' + distPath + '/img/sp/'
+  cssBgDistPath: '../' + distPath + '/img/bg/'
 
-  # 文件构建的临时目录
-  cssOutPath: '../' + theme + '/src/_css/'
-  jsOutPath: '../' + theme + '/src/_js/'
-  tplOutPath: '../' + theme + '/src/js/_tpl/'
+  # 文件构建的Debug目录
+  cssOutPath: '../' + srcPath + '/_css/'
+  jsOutPath: '../' + srcPath + '/_js/'
+  tplOutPath: '../' + srcPath + '/js/_tpl/'
   
   # 文件构建的源码目录
-  lessPath: '../' + theme + '/src/less/'
-  jsSrcPath: '../' + theme + '/src/js/'
-  tplSrcPath: '../' + theme + '/src/tpl/'
-  imgSrcPath: '../' + theme + '/src/_img/'
-  
-  spriteSrcPath: '../' + theme + '/src/sprite/'
-  spriteLessOutPath: '../' + theme + '/src/less/sprite/'
-  spriteImgOutPath: '../' + theme + '/src/_img/sp/'
+  lessPath: '../' + srcPath + '/less/'
+  jsSrcPath: '../' + srcPath + '/js/'
+  tplSrcPath: '../' + srcPath + '/tpl/'
+  # tplJsSrcPath: path.join(st_root, 'tpl/')
+  spriteSrcPath: '../' + srcPath + '/sprite/'
+  spriteLessOutPath: '../' + srcPath + '/less/sprite/'
+  spriteImgOutPath: '../' + srcPath + '/_img/sp/'
 
   # Hash Map path
-  mapPath: '../' + theme + '/dist/map/'
-  phpMapPath: phpHashMapPath
+  mapPath: '../' + distPath + '/map/'
   jsMapName : 'jsmap.json'
   cssMapName : 'cssmap.json'
-  spMapName : 'spmap.json'
+  # spMapName : 'spmap.json'
   cssBgMap : 'cssbgmap.json'
+  jsLibsMapName : 'jslibs.json'
+  jsDistMapName : 'jslibs.json'
 
   # 一个大坑啊。。。
   watchFiles: [
-      '../' + theme + '/src/js/**/*.js'
-      '../' + theme + '/src/sprite/**/*.png'
-      '../' + theme + '/src/less/**/*.less'
-      '../' + theme + '/src/tpl/**/*.html'
-      '../' + theme + '/src/html/**/*.html'
-      '!../' + theme + '/src/**/.DS_Store'
+      '../' + srcPath + '/js/**/*.js'
+      '../' + srcPath + '/sprite/**/*.png'
+      '../' + srcPath + '/less/**/*.less'
+      '../' + srcPath + '/tpl/**/*.html'
+      '../' + srcPath + '/'+ viewsDir + '**/*.html'
+      '!../' + srcPath + '/**/.DS_Store'
     ]

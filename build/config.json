@@ -1,13 +1,14 @@
 {
-	"evn":"release",
-    "isCombo":false,
-    "cndDomain":"static.local",
-    "theme":"asset",
-    "htmlTplPath": "../demo",
-    "phpHashMapPath": "../demo/hashmap",
-    "jsPrefix":"sm.",
-    "coreJsName":"core_libs",
-    "indexJsName":"index_mod",
-    "indexJsModuleID":"mods/index/main",
-    "hashLength":10 
+    "evn":"dev",
+    "isCombo":true,
+    "cndDomain":"pcs.shenba.com",
+    "srcPathName":"_src",
+    "distPathName":"assets",
+    "htmlTplDist": "../html/",
+    "coreJs":{
+        "mods":["jquery","smcore","cookie"],
+        "name":"corelibs"
+    },
+    "jsPrefix":"sb.",
+    "hashLength":12
 }

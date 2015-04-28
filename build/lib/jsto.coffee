@@ -1,278 +1,160 @@
-###
+###*
 # js生产文件构建类
+# @date 2014-12-2 15:10:14
+# @author pjg <iampjg@gmail.com>
+# @link http://pjg.pw
+# @version $Id$
 ###
 
 fs      = require 'fs'
 path    = require 'path'
-config  = require '../config'
-amdeps  = require './amdeps'
-flctl   = require './flctl'
 _       = require 'lodash'
+amdclean = require 'amdclean'
+config  = require '../config'
 gulp    = require 'gulp'
-revall  = require 'gulp-rev-all'
-uglify  = require 'uglify-js'
-_uglify = require 'gulp-uglify'
+gutil   = require 'gulp-util'
+uglify  = require 'gulp-uglify'
+plumber = require 'gulp-plumber'
+# rename  = require 'gulp-rename'
 header  = require 'gulp-header'
 pkg     = require '../package.json'
-info    = '/* <%= pkg.name %>@v<%= pkg.version %>, @description <%= pkg.description %>, @author <%= pkg.author.name %>, @blog <%= pkg.author.url %> */\n'
-rjs     = require 'gulp-requirejs'
-plumber = require 'gulp-plumber'
-gutil   = require 'gulp-util'
-color   = gutil.colors
+info    = '/* <%= pkg.name %>@v<%= pkg.version %>, @author <%= pkg.author.name %>, @blog <%= pkg.author.url %> */\n'
+
+color = gutil.colors
+
+# CSS和雪碧图的相关path
+_jsPath     = config.jsSrcPath
+_jsDevPath  = config.jsOutPath
+_jsDistPath = config.jsDistPath
+_jsMapName  = config.jsMapName
+_mapPath    = config.mapPath
+_hashLen    = config.hashLength
+_isCombo    = config.isCombo
 
 
-### 构建AMD模块依赖表的基类 ###
-jsDepBuilder = amdeps.bder
-
-butil      = require './butil'
+butil       = require './butil'
 errrHandler = butil.errrHandler
-objMixin    = butil.objMixin
+md5         = butil.md5
+binit       = require './binit'
 
 ###
-# 合并AMD模块到debug目录的继承类
+# js 生产文件处理函数
+# @param {string} files 接收一个路径参数，同gulp.src
+# @param {function} cb 处理过程中，处理一个buffer流的回调
+# @param {function} cb2 所有buffer处理完成后的回调函数
 ###
-class jsToDev extends jsDepBuilder
-    prefix: config.prefix
-    outPath: config.jsOutPath
-    distPath: config.jsDistPath
-    libsPath: config.jsLibPath
-    configStr: "
-        window['#{config.configName}'] = #{JSON.stringify(config.configDate, null, 2)}
-        "
-    ### AMD模块加载JS与第三方JS合并成核心JS库 ###
-    rjsBuilder: (modules,cb)=>
-        _cb = cb or ->
-        _baseUrl = @srcPath
-        _destPath = @outPath
-        _name = 'almond'
-        # _veCfgFile = config.veCfgFileName
-        _include = _.union ['jquery','smcore'].concat(modules)
-        # console.log _include
-        if config.indexModuleName not in _include
-            _outName = config.coreJsName
-        else
-            _outName = config.indexJsDistName
-        _paths = JSON.parse fs.readFileSync(path.join(config.dataPath, 'jslib.paths.json'), 'utf8')
-        _shim = JSON.parse fs.readFileSync(path.join(config.dataPath, 'shim.json'), 'utf8')
-        
-        _rjs = rjs
-            baseUrl: _baseUrl
-            # mainConfigFile: _mainConfigFile
-            paths: _paths
-            name: _name
-            include: _include
-            out: _outName + '.js'
-            shim: _shim
+amdReg = /;?\s*define\s*\(([^(]*),?\s*?function\s*\([^\)]*\)/
+expStr = /define\s*\(([^(]*),?\s*?function/
+depArrReg = /^[^\[]*(\[[^\]\[]*\]).*$/
 
-        _rjs.on 'data',(output)->
-            _soure = String(output.contents)
-            _outPath = _destPath + _outName + '.js'
-            fs.writeFileSync _outPath, _soure, 'utf8'
-            _cb()
+tryEval = (str)-> 
+    try 
+        json = eval('(' + str + ')')
+    catch err
 
-    ### 合并所有第三方lib模块 ### 
-    coreModule: (cb)=>
-        _cb = cb or ->
-        _makeDeps = @makeDeps()
-        _depLibs = _makeDeps.depLibs        
-        # 核心库队列
-        _modules = ['jquery'].concat(_depLibs)
-        @rjsBuilder _modules,-> _cb()
+# 过滤依赖表里的关键词，排除空依赖 
+filterDepMap = (depMap)->
+    depMap = depMap.filter (dep)->
+        ["require", "exports", "module", ""].indexOf(dep) == -1
+    return depMap.map (dep) -> 
+                return dep.replace(/\.js$/,'')
 
-    ### 合并首页模块 ###
-    indexModule: (cb) =>
-        _cb = cb or ->
-        _index_module_name = config.indexModuleName
-        _index_moduleDeps = @makeDeps().allDeps[_index_module_name]
-        _modules = _index_moduleDeps.libList.concat(_index_moduleDeps.modList)
-        _modules.push(_index_module_name)
-        # gutil.log _modules
-        @rjsBuilder _modules,-> _cb()
+# 将绝对路径转换为AMD模块ID
+madeModId = (filepath)->
+    return filepath.replace(/\\/g,'/')
+                   .split('/js/')[1]
+                   .replace(/.js$/,'')
 
-    ### 合并单个模块 ###
-    oneModule: (name,cb)=>
-        _cb = cb or ->
-        _module_name = name
+# 将相对路径转换为AMD模块ID
+madeModList = (depArr,curPath)->
+    _arr = []
+    if depArr.length > 0
+        _.forEach depArr,(val)->
+            _val = val
+            if _val.indexOf('../') is 0 or _val.indexOf('./') is 0
+                _filePath = path.join curPath,_val
+                _val = madeModId _filePath
+            _arr.push _val
+    return _arr
+    
+# 将js数组转字符串
+arrToString = (arr)->
+    _str = ""
+    if arr.length > 0
+        _.forEach arr,(val,n)->
+            _str += (if n > 0 then "," else "") + "'#{val}'"
+    return "[#{_str}]"
 
-        # 过滤下划线的js模块
-        # console.log "_module_name==   " + _module_name
-        return _cb() if _module_name.indexOf("_") is 0
+_stream = (files,cb,cb2)->
+    gulp.src [files]
+    .pipe plumber({errorHandler: errrHandler})
+    # .pipe uglify()
+    # .pipe header(info, { pkg : pkg })
+    .on 'data',(source)->
+        _list = []
+        _filePath = source.path.replace(/\\/g,'/')
+        _nameObj = path.parse _filePath
+        _nameObj.hash = md5(source.contents)
+        _modId = madeModId(_filePath)
+        _source = String(source.contents)
+        if _filePath.indexOf("/vendor/") is -1
+            _source = _source.replace amdReg,(str,map)->
+                _depStr = map.replace depArrReg, "$1"
+                if /^\[/.test(_depStr)
+                    _arr = tryEval _depStr
+                    try 
+                        _list = madeModList(filterDepMap(_arr),_nameObj.dir)
+                        _str = arrToString _list
+                        return str.replace(expStr, "define('#{_modId}',#{_str},function")
+                    catch error
+                else
+                    return str.replace(expStr, "define('#{_modId}',function")
+            # _source = amdclean.clean({
+            #         code:_source
+            #         wrap:null
+            #     })
+            # console.log _source
 
-        _num = 0
+        cb(_nameObj,_source)
+    .on 'end',cb2
 
-        if _module_name.indexOf("/") is -1 or _module_name.indexOf('.') is 0
-            gutil.log "#{_module_name}not an AMD module"
-            return _cb()
+# 生成js的生产文件
+_buildJs = (name,source)->
+    _file = path.join(_jsDevPath, name)
+    butil.mkdirsSync(path.dirname(_file))
+    fs.writeFileSync _file, source, 'utf8'
 
-        if _module_name is config.indexModuleName
-           return @indexModule -> 
-                  gutil.log color.cyan(config.indexJsDistName + '.js'),"build success"
-        else 
-            _jsData = []
-            _module_path = @srcPath
-            _out_path = @outPath
-            _moduleDeps = @makeDeps().allDeps[_module_name].modList
-            _this_js = path.join _module_path, _module_name + '.js'
-            _devName = @prefix + _module_name.replace(/\//g, '_') + '.js'
-            _devPath = @outPath + _devName
-            # console.log _moduleDeps
-            for f in _moduleDeps
-                _jsFile = path.join(_module_path, f + '.js')
-                if fs.statSync(_jsFile).isFile()
-                    _source = fs.readFileSync(_jsFile, 'utf8')
-                    # !!JSHINT(_source)
-                    # JSHINT.errors.filter (error)->
-                    #     if error
-                    #         gutil.log color.cyan(f)," error in line #{error.line}==>"
-                    #         console.log error.reason
-                    _jsData.push _source + ';'
-            # 追加当前模块到队列的最后
-            _jsData.push fs.readFileSync(_this_js, 'utf8') + ';'
-            try
-                # mangled = uglify.minify String(_jsData.join('')),
-                #             fromString: true
-                # source = mangled.code
-                # has = md5(source).substring(0,10)
-                source = _jsData.join('')
-                fs.writeFileSync _devPath, source, 'utf8'
-                _num++
-                _cb()
-            catch error
-                gutil.log "Error: #{_devName}"
-                gutil.log error
+# 生成js的Hash Map
+_buildPaths = binit.paths
 
-    ### 合并js模块 ###
-    modulesToDev: (cb)=> 
-        _cb = cb or ->
-        _srcPath = @srcPath
-        _allDeps = @makeDeps().allDeps
-        # console.log _allDeps
-        _depList = _allDeps.modList
-        # 生成依赖
-        _num = 0
-        gutil.log color.yellow "Combine javascript modules! Waitting..."
-        for module,deps of _allDeps
-            # 过滤下划线的js模块
-            if module.indexOf("_") isnt 0
-                # 排除首页模块
-                # if module isnt config.indexModuleName
-                _this_js = path.join(_srcPath, module + '.js')
-                # console.log "module---------->   " + module
-                _devName = @prefix + module.replace(/\//g,'_') + '.js'
-                # console.log "_devName-------->   " + _devName
-                _devPath = @outPath + _devName
-                _jsData = []  
-                _modList = deps.modList
-                # console.log _modList
-                for f in _modList
-                    _jsFile = path.join(_srcPath, f + '.js')
-                    if fs.statSync(_jsFile).isFile() and f.indexOf('.') != 0
-                        _source = fs.readFileSync(_jsFile, 'utf8')
-                        _jsData.push _source + ';'
-                # 追加当前模块到队列的最后
-                _jsData.push fs.readFileSync(_this_js, 'utf8') + ';'
-                gutil.log "Waitting..." if _num % 10 == 0 and _num > 1
-                try
-                    source = _jsData.join('')
-                    fs.writeFileSync _devPath, source, 'utf8'
-                    _num++
-                catch error
-                    gutil.log "Error: #{_devName}"
-                    gutil.log error
-        _cb(_num)
-
-    # build all modules to dev
-    init: (cb)=>
-        _cb = cb or ->
-        _modulesToDev = @modulesToDev
-        _coreModule = @coreModule
-        _indexModule = @indexModule
-        _modulesToDev (num)->
-            gutil.log color.cyan(num),"javascript modules combined!"
-            # build core module
-            _coreModule ->
-                gutil.log '\'' + color.cyan("#{config.coreJsName}") + '\'',"combined!"
-                # build index module
-                _indexModule ->
-                    gutil.log '\'' + color.cyan("#{config.indexJsDistName}") + '\'',"combined!"
-                    gutil.log color.green "All javascript combined!"
-                    _cb()
-
-# ###
-# # js生产文件的构建类
-# ###
-# class jsToDist
-#     # constructor: (@prefix) ->
-#     jsPath:  config.jsOutPath
-#     jsDistPath: config.jsDistPath
-#     mapPath: config.mapPath
-#     getMap: butil.getJSONSync path.join(config.mapPath, config.jsMapName)
-#     getOldMap: butil.getJSONSync path.join(config.mapPath, "old_" + config.jsMapName)
-#     # 读取生产目录中的js文件名，并返回数组
-#     jsDistList: =>
-#         _jsList = new flctl('.js').getList()
-#         return _jsList or []
-
-#     ### 判断js是否有改变 ###
-#     isChange:(name)=>
-#         _valName = name
-#         _keyName = name.split('.')[0] + '.js'
-#         _map = @getMap
-#         _jsList = @jsDistList()
-#         # console.log _distList
-#         return {
-#             status: not _.has(_map,_keyName) or _map[_keyName].replace('/','') isnt name or name not in _jsList
-#             key:_keyName
-#             valule: _map[_keyName] or ""
-#         }
-#     ### 更新上一个版本的js Hash表 ###
-#     updateMap:(newMap,cb)=>
-#         _map = @getMap
-#         _oldMap = @getOldMap
-#         _temp = objMixin _map,newMap
-#         _newMap = objMixin _oldMap,_temp
-#         _file = path.join config.mapPath, "old_" + config.jsMapName
-#         _str = JSON.stringify(_newMap, null, 2)
-#         fs.writeFileSync _file, _str, 'utf8'
-#         cb()
-
-#     ### 推送js到生产目录 并生成最新的hash map ###
-#     push: (cb)=>
-#         _cb = cb or ->
-#         _jsPath  =  @jsPath
-#         _jsDistPath = @jsDistPath
-#         _mapPath = @mapPath      
-#         _isChange = @isChange
-#         _updateMap = @updateMap
-#         _count = 0
-#         _Map = @getMap
-#         _newMap = {}
-#         _pushJs = gulp.src [_jsPath + "*.js"]
-#             .pipe plumber({errorHandler: errrHandler})
-#             .pipe _uglify() 
-#             .pipe header(info, { pkg : pkg })
-#             .pipe revall({
-#                     hashLength: config.hashLength
-#                     silent: true
-#                 })
-#             .pipe gulp.dest(_jsDistPath)
-#             .on 'data',(output)->
-#                 _soure = String(output.contents)
-#                 _name = path.basename output.path
-#                 gutil.log "Waitting..." if _count%10 is 0
-#                 result = _isChange(_name)
-#                 if result.status
-#                     gutil.log "#{_name} is change!!!"
-#                     _newMap[result.key] = result.valule
-#                     # _outPath = _jsDistPath + _name
-#                     # fs.writeFileSync _outPath, _soure, 'utf8'
-#                 _count++
-#             .pipe revall.manifest({ fileName: config.jsMapName })
-#             .pipe gulp.dest(_mapPath)   
-#             .on 'end', ->
-#                 _updateMap _newMap,->
-#                     _cb()
-
-
-exports.dev = jsToDev
-# exports.dist = jsToDist
+###
+# js生产文件构建函数
+# @param {string} file 同gulp.src接口所接收的参数，默认是js debug目录中的所有js文件
+# @param {function} done 回调函数
+###
+module.exports = (file,done)->
+    gutil.log "Build AMDmodule with ID"
+    if typeof file is 'function'
+        _done = file
+        _file = _jsPath + '**/*.js'
+    else
+        _file = file or _jsPath + '**/*.js'
+        _done = done or ->
+    _num = 0
+    _stream(
+        _file
+        (obj,source)->
+            _source = source
+            _dir = obj.dir.split("/js/")[1]
+            # _distname = obj.name + (if not _isCombo then  '.' + obj.hash.substr(0,_hashLen) else '' ) + obj.ext
+            _distname = obj.name + obj.ext
+            _dir && (_distname = _dir + '/' + _distname)
+            if _num%5 == 0 and _num > 4
+                gutil.log 'Building...'
+            _buildJs _distname,_source
+            _num++
+        ->
+            _buildPaths '.js',->
+                gutil.log color.green 'Build success!'
+                _done()
+    )

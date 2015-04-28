@@ -7,21 +7,23 @@
  * @link http://pjg.pw
  * @version $Id$
  */
-var butil, cfg, cndDomain, htmlTplPath, path, phpHashMapPath, st_root, theme;
+var butil, cfg, cndDomain, distPath, htmlTplDist, path, srcPath, st_root, viewsDir;
 
 path = require('path');
 
 butil = require('./lib/butil');
 
+st_root = path.join(__dirname);
+
+viewsDir = 'html/';
+
 cfg = butil.getJSONSync('config.json');
 
-theme = cfg.theme;
+srcPath = cfg.srcPathName;
 
-st_root = path.join(__dirname, "..", theme);
+distPath = cfg.distPathName;
 
-htmlTplPath = cfg.htmlTplPath;
-
-phpHashMapPath = cfg.phpHashMapPath;
+htmlTplDist = cfg.htmlTplDist;
 
 cndDomain = cfg.cndDomain;
 
@@ -29,41 +31,43 @@ module.exports = {
   evn: cfg.evn,
   isCombo: cfg.isCombo,
   rootPath: st_root,
-  htmlPath: htmlTplPath,
-  htmlSrc: '../' + theme + '/src/html/',
+  theme: srcPath,
+  views: viewsDir,
+  htmlTplSrc: path.join("..", srcPath, viewsDir),
+  htmlTplDist: htmlTplDist,
   prefix: cfg.jsPrefix,
   hashLength: cfg.hashLength,
-  coreJsName: cfg.jsPrefix + cfg.coreJsName,
-  indexJsDistName: cfg.jsPrefix + cfg.indexJsName,
-  indexModuleName: cfg.indexJsModuleID,
-  staticRoot: "//" + cndDomain + "/",
-  staticPath: "//" + cndDomain + "/" + theme + "/",
+  coreJsName: cfg.jsPrefix + cfg.coreJs.name,
+  coreJsMods: cfg.coreJs.mods,
+  staticRoot: "http://" + cndDomain + "/",
+  staticPath: "http://" + cndDomain + "/" + srcPath + "/",
+  cndStaticPath: "http://" + cndDomain + "/" + distPath + "/",
   dataPath: './data',
   spriteDataPath: './data/sp.map.json',
   spriteHasPath: './data/sp.has.json',
-  jsLibPath: '../libs/',
-  docOutPath: '../' + theme + '/doc/',
-  cssDistPath: '../' + theme + '/dist/css/',
-  jsDistPath: '../' + theme + '/dist/js/',
-  tplDistPath: '../' + theme + '/dist/js/',
-  imgDistPath: '../' + theme + '/img/',
-  spriteDistPath: '../' + theme + '/img/sp/',
-  cssBgDistPath: '../' + theme + '/img/bg/',
-  cssOutPath: '../' + theme + '/src/_css/',
-  jsOutPath: '../' + theme + '/src/_js/',
-  tplOutPath: '../' + theme + '/src/js/_tpl/',
-  lessPath: '../' + theme + '/src/less/',
-  jsSrcPath: '../' + theme + '/src/js/',
-  tplSrcPath: '../' + theme + '/src/tpl/',
-  imgSrcPath: '../' + theme + '/src/_img/',
-  spriteSrcPath: '../' + theme + '/src/sprite/',
-  spriteLessOutPath: '../' + theme + '/src/less/sprite/',
-  spriteImgOutPath: '../' + theme + '/src/_img/sp/',
-  mapPath: '../' + theme + '/dist/map/',
-  phpMapPath: phpHashMapPath,
+  jsLibPath: '../' + srcPath + '/js/vendor/',
+  docOutPath: '../' + srcPath + '/doc/',
+  imgSrcPath: '../' + srcPath + '/_img/',
+  cssDistPath: '../' + distPath + '/css/',
+  jsDistPath: '../' + distPath + '/js/',
+  tplDistPath: '../' + distPath + '/js/',
+  imgDistPath: '../' + distPath + '/img/',
+  spriteDistPath: '../' + distPath + '/img/sp/',
+  cssBgDistPath: '../' + distPath + '/img/bg/',
+  cssOutPath: '../' + srcPath + '/_css/',
+  jsOutPath: '../' + srcPath + '/_js/',
+  tplOutPath: '../' + srcPath + '/js/_tpl/',
+  lessPath: '../' + srcPath + '/less/',
+  jsSrcPath: '../' + srcPath + '/js/',
+  tplSrcPath: '../' + srcPath + '/tpl/',
+  spriteSrcPath: '../' + srcPath + '/sprite/',
+  spriteLessOutPath: '../' + srcPath + '/less/sprite/',
+  spriteImgOutPath: '../' + srcPath + '/_img/sp/',
+  mapPath: '../' + distPath + '/map/',
   jsMapName: 'jsmap.json',
   cssMapName: 'cssmap.json',
-  spMapName: 'spmap.json',
   cssBgMap: 'cssbgmap.json',
-  watchFiles: ['../' + theme + '/src/js/**/*.js', '../' + theme + '/src/sprite/**/*.png', '../' + theme + '/src/less/**/*.less', '../' + theme + '/src/tpl/**/*.html', '../' + theme + '/src/html/**/*.html', '!../' + theme + '/src/**/.DS_Store']
+  jsLibsMapName: 'jslibs.json',
+  jsDistMapName: 'jslibs.json',
+  watchFiles: ['../' + srcPath + '/js/**/*.js', '../' + srcPath + '/sprite/**/*.png', '../' + srcPath + '/less/**/*.less', '../' + srcPath + '/tpl/**/*.html', '../' + srcPath + '/' + viewsDir + '**/*.html', '!../' + srcPath + '/**/.DS_Store']
 };

@@ -103,8 +103,7 @@ _spToLess = (type,cb)->
         for folder in _newBuildFolders
             _pngsToOneImg folder, ->
                 _num++
-                if _num%10 == 1
-                    gutil.log 'Waitting...'
+                _num%10 == 1 and gutil.log 'Waitting...'
                 if _num == total
                     _buildMap -> 
                     	gutil.log color.green 'Sprite IMG and LESS build success'

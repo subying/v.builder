@@ -7,7 +7,7 @@
  * @link http://pjg.pw
  * @version $Id$
  */
-var JSHINT, _autowatch, butil, checkFile, color, config, cssbd, errrHandler, fs, gutil, htmlCtl, htmlToJs, jsError, jsToDev, jshint, jsto, path, watch, watchChecker,
+var JSHINT, _autowatch, butil, checkFile, color, config, css2dist, cssbd, errrHandler, fs, gutil, htmlCtl, htmlToJs, jsError, jshint, jsto, path, watch, watchChecker,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty,
@@ -25,13 +25,13 @@ gutil = require('gulp-util');
 
 cssbd = require('./cssbd');
 
+css2dist = require('./cssto');
+
 htmlToJs = require('./html2js');
 
 htmlCtl = require('./htmlctl');
 
 jsto = require('./jsto');
-
-jsToDev = jsto.dev;
 
 color = gutil.colors;
 
@@ -72,21 +72,26 @@ watchChecker = (function() {
     this.file = file1;
   }
 
+  watchChecker.prototype.getParse = function() {
+    var _file, _pathObj, _str;
+    _file = this.file;
+    _str = _file.split(config.theme + "/")[1] + "";
+    _pathObj = path.parse(_str);
+    return _pathObj;
+  };
+
   watchChecker.prototype.type = function() {
-    var dir, ext;
-    ext = path.extname(this.file).replace('.', '');
-    dir = path.dirname(this.file);
-    if (ext === 'html') {
-      ext = dir.indexOf('src/tpl/') !== -1 ? 'tpl' : 'html';
+    var _ext, _file;
+    _file = this.file;
+    _ext = this.getParse().ext.replace('.', '');
+    if (_ext === 'html') {
+      _ext = _file.indexOf(config.views) === -1 ? 'tpl' : 'html';
     }
-    return ext;
+    return _ext;
   };
 
   watchChecker.prototype.folder = function() {
-    var _file, _str;
-    _file = this.file;
-    _str = _file.split('src/tpl/')[1] + "";
-    return _str.split('/')[0];
+    return this.getParse().dir;
   };
 
   return watchChecker;
@@ -112,26 +117,18 @@ checkFile = (function(superClass) {
   }
 
   checkFile.prototype.js = function(cb) {
-    var _file, _jsToDev, _module, _type, file, i, len, list;
+    var _file, _type;
     _type = this.type();
     if (_type !== 'js') {
       return false;
     }
-    _file = this.file.replace(config.jsSrcPath, "");
+    _file = this.file;
     jsError(_file);
-    _module = _file.replace(".js", "").split('src/js/')[1];
-    if (_module.indexOf('/') !== -1) {
-      _jsToDev = new jsToDev();
-      list = _jsToDev.makeRelateList(_module);
-      gutil.log("Conbine", '\'' + color.cyan(_module) + '\'', "and relevant modules ...");
-      gutil.log("Waitting...");
-      for (i = 0, len = list.length; i < len; i++) {
-        file = list[i];
-        gutil.log('\'' + color.cyan(file) + '\'', "module has changed!");
-        _jsToDev.oneModule(file);
-      }
+    gutil.log("Conbine", '\'' + color.cyan(_file.split('/js/')[1]) + '\'', "...");
+    return jsto(_file, function() {
+      gutil.log(color.cyan(_file.split('/js/')[1]), "Conbined!!!");
       return cb();
-    }
+    });
   };
 
   checkFile.prototype.tpl = function(cb) {
@@ -140,7 +137,7 @@ checkFile = (function(superClass) {
     if (_type !== 'tpl') {
       return false;
     }
-    _folder = this.folder();
+    _folder = this.folder().replace('tpl/', '');
     gutil.log(color.yellow("Convert html to js"));
     htmlToJs(_folder);
     gutil.log(color.green("Convert success!"));
@@ -166,7 +163,9 @@ checkFile = (function(superClass) {
     gutil.log(color.yellow("Compiling Less into CSS"));
     return cssbd.less2css(function() {
       gutil.log(color.green("Less compile success!"));
-      return cb();
+      return css2dist(function() {
+        return cb();
+      });
     });
   };
 
@@ -176,7 +175,7 @@ checkFile = (function(superClass) {
     if (_type !== 'png') {
       return false;
     }
-    sp_folder = this.folder();
+    sp_folder = this.folder().replace('sprite/', '');
     return cssbd.png2img(sp_folder, function() {
       gutil.log(color.green(sp_folder + " sprite build success!"));
       return cb();
@@ -236,23 +235,24 @@ _autowatch = function(cb) {
     var _checkfile, _event, _file_folder, _file_path, _file_type, err, watch_timer;
     try {
       _event = file.event;
-      if (_event !== void 0 || _event !== 'unlink') {
-        _file_path = file.path;
-        _checkfile = new checkFile(_file_path);
-        _file_type = _checkfile.type();
-        _file_folder = _checkfile.folder();
-        _list[_file_type] = [];
-        if (indexOf.call(_list[_file_type], _file_path) < 0) {
-          gutil.log('\'' + color.cyan(file.relative) + '\'', "was " + _event);
-          _list[_file_type].push(_file_path);
-          if ((_file_type === 'tpl' || _file_type === 'png') && indexOf.call(_folder, _file_folder) >= 0) {
-            return false;
-          }
-          _folder.push(_file_folder);
-          _checkfile.build(function() {
-            return _cb();
-          });
+      if (_event === 'undefined' || _event === 'unlink') {
+        return false;
+      }
+      _file_path = file.path.replace(/\\/g, '/');
+      _checkfile = new checkFile(_file_path);
+      _file_type = _checkfile.type();
+      _file_folder = _checkfile.folder();
+      _list[_file_type] = [];
+      if (indexOf.call(_list[_file_type], _file_path) < 0) {
+        gutil.log('\'' + color.cyan(file.relative) + '\'', "was " + _event);
+        _list[_file_type].push(_file_path);
+        if ((_file_type === 'tpl' || _file_type === 'png') && indexOf.call(_folder, _file_folder) >= 0) {
+          return false;
         }
+        _folder.push(_file_folder);
+        _checkfile.build(function() {
+          return _cb();
+        });
       }
       if (watch_timer) {
         clearTimeout(watch_timer);

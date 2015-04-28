@@ -36,46 +36,46 @@ gulp.task 'del.dist', ->
 ###
 # build sprite,less,css,js,tpl...
 ###
-gulp.task 'build.jslib', -> 
-    build.jsLibPaths()
+gulp.task 'jslibs', -> 
+    build.jsLibs()
 
-gulp.task 'build.cfg', ->
+gulp.task 'cfg', ->
     build.config()
 
-gulp.task 'build.tpl', ->
+gulp.task 'tpl', ->
     build.tpl2dev()
 
-gulp.task 'build.js', ->
+gulp.task 'js2dev', ->
     build.js2dev()
 
-gulp.task 'build.sp', ->
+gulp.task 'js2dist', ->
+    build.js2dist()
+
+gulp.task 'sp', ->
     build.sprite()
 
-gulp.task 'build.less', ->
+gulp.task 'bgmap', -> 
+    build.bgMap()
+
+gulp.task 'less', ->
     build.less2css()
 
-gulp.task 'build.bgmap', ->
-    build.bgmap()
+gulp.task 'css', ->
+    build.bgMap ->
+        build.css2dist()
 
 ###
 # push all files to dist
 ###
-gulp.task 'css2dist', ->
-    build.cssctl ->
-        
-gulp.task 'js2dist', ->
-    build.jsctl ->
-        gutil.log color.green 'JS pushed!'
 
+gulp.task 'all2dist', ->
+    build.all2dist()
 
 ###
 # Injecting static files relative to PHP-tpl files
 ###
 gulp.task 'html2dist', ->
-    build.bgmap ->
-        build.cssctl ->
-            build.jsctl ->
-                build.htmlctl()
+    build.htmlctl()
 
 ###
 # build bat tool
@@ -96,10 +96,6 @@ gulp.task 'tool', ->
         fs.writeFileSync shFile, sh.join('\n')
         fs.chmodSync shFile, '0755'
 
-gulp.task 'git', ->
-    exec 'sh ./bin/autogit.sh',(error, stdout, stderr)->
-        gutil.log stdout
-        gutil.log stderr
 
 ###
 # watch tasks
@@ -116,26 +112,36 @@ gulp.task 'watch', ->
 # dev task
 ###
 gulp.task 'default',[], ->
-    build.sprite ->
-        build.less2css ->
-            build.jsLibPaths ->
-                build.config ->
-                    build.tpl2dev ->
-                        build.js2dev ->
-                            build.all2dist ->
-                                setTimeout ->
-                                    gulp.start ['watch']
-                                ,2000
+    setTimeout ->
+        build.sprite ->
+            build.less2css ->
+                build.bgMap ->
+                    build.css2dist ->
+                        build.jsLibs ->
+                            build.config ->
+                                build.tpl2dev ->
+                                    build.js2dev ->
+                                        build.js2dist ->
+                                            build.htmlctl ->
+                                                setTimeout ->
+                                                    gulp.start ['watch']
+                                                ,2000
+    ,100
 ###
 # release
 ###
 gulp.task 'release',['del.dist'], ->
-    build.sprite ->
-        build.less2css ->
-            build.jsLibPaths ->
-                build.tpl2dev ->
-                    build.js2dev -> 
-                        build.all2dist ->
-                            gutil.log "Finished", '\'' + color.cyan('Release') + '\'.'
-                        
+    setTimeout ->
+        build.sprite ->
+            build.less2css ->
+                build.bgMap ->
+                    build.css2dist ->
+                        build.jsLibs ->
+                            build.config ->
+                                build.tpl2dev ->
+                                    build.js2dev ->
+                                        build.js2dist -> 
+                                            build.htmlctl ->
+                                                gutil.log color.green 'Finished Release!'
+    ,100
 

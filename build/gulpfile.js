@@ -57,32 +57,42 @@ gulp.task('del.dist', function() {
  * build sprite,less,css,js,tpl...
  */
 
-gulp.task('build.jslib', function() {
-  return build.jsLibPaths();
+gulp.task('jslibs', function() {
+  return build.jsLibs();
 });
 
-gulp.task('build.cfg', function() {
+gulp.task('cfg', function() {
   return build.config();
 });
 
-gulp.task('build.tpl', function() {
+gulp.task('tpl', function() {
   return build.tpl2dev();
 });
 
-gulp.task('build.js', function() {
+gulp.task('js2dev', function() {
   return build.js2dev();
 });
 
-gulp.task('build.sp', function() {
+gulp.task('js2dist', function() {
+  return build.js2dist();
+});
+
+gulp.task('sp', function() {
   return build.sprite();
 });
 
-gulp.task('build.less', function() {
+gulp.task('bgmap', function() {
+  return build.bgMap();
+});
+
+gulp.task('less', function() {
   return build.less2css();
 });
 
-gulp.task('build.bgmap', function() {
-  return build.bgmap();
+gulp.task('css', function() {
+  return build.bgMap(function() {
+    return build.css2dist();
+  });
 });
 
 
@@ -90,14 +100,8 @@ gulp.task('build.bgmap', function() {
  * push all files to dist
  */
 
-gulp.task('css2dist', function() {
-  return build.cssctl(function() {});
-});
-
-gulp.task('js2dist', function() {
-  return build.jsctl(function() {
-    return gutil.log(color.green('JS pushed!'));
-  });
+gulp.task('all2dist', function() {
+  return build.all2dist();
 });
 
 
@@ -106,13 +110,7 @@ gulp.task('js2dist', function() {
  */
 
 gulp.task('html2dist', function() {
-  return build.bgmap(function() {
-    return build.cssctl(function() {
-      return build.jsctl(function() {
-        return build.htmlctl();
-      });
-    });
-  });
+  return build.htmlctl();
 });
 
 
@@ -139,13 +137,6 @@ gulp.task('tool', function() {
   }
 });
 
-gulp.task('git', function() {
-  return exec('sh ./bin/autogit.sh', function(error, stdout, stderr) {
-    gutil.log(stdout);
-    return gutil.log(stderr);
-  });
-});
-
 
 /*
  * watch tasks
@@ -161,23 +152,31 @@ gulp.task('watch', function() {
  */
 
 gulp.task('default', [], function() {
-  return build.sprite(function() {
-    return build.less2css(function() {
-      return build.jsLibPaths(function() {
-        return build.config(function() {
-          return build.tpl2dev(function() {
-            return build.js2dev(function() {
-              return build.all2dist(function() {
-                return setTimeout(function() {
-                  return gulp.start(['watch']);
-                }, 2000);
+  return setTimeout(function() {
+    return build.sprite(function() {
+      return build.less2css(function() {
+        return build.bgMap(function() {
+          return build.css2dist(function() {
+            return build.jsLibs(function() {
+              return build.config(function() {
+                return build.tpl2dev(function() {
+                  return build.js2dev(function() {
+                    return build.js2dist(function() {
+                      return build.htmlctl(function() {
+                        return setTimeout(function() {
+                          return gulp.start(['watch']);
+                        }, 2000);
+                      });
+                    });
+                  });
+                });
               });
             });
           });
         });
       });
     });
-  });
+  }, 100);
 });
 
 
@@ -186,17 +185,27 @@ gulp.task('default', [], function() {
  */
 
 gulp.task('release', ['del.dist'], function() {
-  return build.sprite(function() {
-    return build.less2css(function() {
-      return build.jsLibPaths(function() {
-        return build.tpl2dev(function() {
-          return build.js2dev(function() {
-            return build.all2dist(function() {
-              return gutil.log("Finished", '\'' + color.cyan('Release') + '\'.');
+  return setTimeout(function() {
+    return build.sprite(function() {
+      return build.less2css(function() {
+        return build.bgMap(function() {
+          return build.css2dist(function() {
+            return build.jsLibs(function() {
+              return build.config(function() {
+                return build.tpl2dev(function() {
+                  return build.js2dev(function() {
+                    return build.js2dist(function() {
+                      return build.htmlctl(function() {
+                        return gutil.log(color.green('Finished Release!'));
+                      });
+                    });
+                  });
+                });
+              });
             });
           });
         });
       });
     });
-  });
+  }, 100);
 });

@@ -7,21 +7,13 @@
  * @link http://pjg.pw
  * @version $Id$
  */
-var autowatch, binit, butil, color, config, crypto, cssCtl, cssbd, flctl, fs, gulp, gutil, htmlCtl, htmlToJs, jsToDev, jsonToPhp, jsto, path, revall, swig;
+var autowatch, binit, butil, color, config, cssToDist, cssbd, flctl, fs, gutil, htmlCtl, htmlToJs, jsCtl, jsToDev, path;
 
 fs = require('fs');
 
 path = require('path');
 
-crypto = require('crypto');
-
 config = require('../config');
-
-swig = require('swig');
-
-gulp = require('gulp');
-
-revall = require('gulp-rev-all');
 
 gutil = require('gulp-util');
 
@@ -38,17 +30,17 @@ flctl = require('./flctl');
 
 cssbd = require('./cssbd');
 
-jsto = require('./jsto');
+cssToDist = require('./cssto');
+
+jsToDev = require('./jsto');
+
+jsCtl = require('./jsctl');
 
 htmlToJs = require('./html2js');
 
-jsonToPhp = require('./json2php');
-
-autowatch = require('./autowatch');
-
 htmlCtl = require('./htmlctl');
 
-cssCtl = require('./cssctl');
+autowatch = require('./autowatch');
 
 
 /*
@@ -118,7 +110,12 @@ exports.files = {
 
 exports.sprite = cssbd.sp2less;
 
-exports.bgmap = binit.bgmap;
+
+/*
+ * 生成背景图的map
+ */
+
+exports.bgMap = binit.bgmap;
 
 
 /*
@@ -132,14 +129,34 @@ exports.less2css = cssbd.less2css;
  * 生成css的生产文件
  */
 
-exports.cssctl = cssCtl;
+exports.css2dist = cssToDist;
+
+
+/*
+ * 生成js模块路径
+ */
+
+exports.cssPaths = function(cb) {
+  cb = cb || function() {};
+  return binit.paths('.css', cb());
+};
 
 
 /*
  * 生成第三方模块路径
  */
 
-exports.jsLibPaths = binit.lib;
+exports.jsLibs = binit.libs;
+
+
+/*
+ * 生成js模块路径
+ */
+
+exports.jsPaths = function(cb) {
+  cb = cb || function() {};
+  return binit.paths('.js', cb());
+};
 
 
 /*
@@ -147,15 +164,6 @@ exports.jsLibPaths = binit.lib;
  */
 
 exports.config = binit.cfg;
-
-jsToDev = jsto.dev;
-
-
-/*
- * 合并AMD js模块到debug目录(./src/_js/)
- */
-
-exports.js2dev = new jsToDev().init;
 
 
 /*
@@ -179,19 +187,17 @@ exports.tpl2dev = function(cb) {
 
 
 /*
- * 将debug目录中AMD js包文件push到生产目录
+ * 合并AMD js模块到debug目录(./src/_js/)
  */
 
-exports.jsctl = require('./jsctl');
+exports.js2dev = jsToDev;
 
 
 /*
- * 构建js/css生产文件的Hash表
+ * 将debug目录中AMD js包文件push到生产目录
  */
 
-exports.json2php = jsonToPhp;
-
-exports.htmlctl = htmlCtl;
+exports.js2dist = new jsCtl.dist().init;
 
 
 /*
@@ -201,16 +207,16 @@ exports.htmlctl = htmlCtl;
 exports.all2dist = function(cb) {
   var _cb;
   _cb = cb || function() {};
-  return exports.bgmap(function() {
-    return exports.cssctl(function() {
-      return exports.jsctl(function() {
-        return exports.htmlctl(function() {
-          return _cb();
-        });
-      });
+  return exports.css2dist(function() {
+    gutil.log(color.green('CSS pushed!'));
+    return exports.js2dist(function() {
+      gutil.log(color.green('JS pushed!'));
+      return _cb();
     });
   });
 };
+
+exports.htmlctl = htmlCtl;
 
 
 /*

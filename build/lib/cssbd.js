@@ -123,9 +123,7 @@ _spToLess = function(type, cb) {
       folder = _newBuildFolders[i];
       results.push(_pngsToOneImg(folder, function() {
         _num++;
-        if (_num % 10 === 1) {
-          gutil.log('Waitting...');
-        }
+        _num % 10 === 1 && gutil.log('Waitting...');
         if (_num === total) {
           return _buildMap(function() {
             gutil.log(color.green('Sprite IMG and LESS build success'));
