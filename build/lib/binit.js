@@ -152,6 +152,7 @@ exports.paths = function(ext, cb) {
         _str = String(fs.readFileSync(sub_Path, 'utf8'));
         _basename = sub_Path.replace(_path, '').replace(/\\\\/g, '/').replace(/\\/g, '/');
         _hash = md5(_str);
+        _name = _basename;
         if (!_isCombo) {
           _nameObj = path.parse(sub_Path.replace(_path, ''));
           _nameObj.hash = md5(_str);

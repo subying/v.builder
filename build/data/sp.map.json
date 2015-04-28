@@ -34,5 +34,16 @@
         "snapping.png",
         "t-sale.png",
         "tips-bg.png"
-    ]
+    ],
+    "list": [
+        "down-active.png",
+        "down.png",
+        "icon-collection.png",
+        "icon-time.png",
+        "radio-active.png",
+        "radio.png",
+        "up-down-active.png",
+        "up-down.png"
+    ],
+    "newhome": []
 }

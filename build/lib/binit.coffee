@@ -145,10 +145,12 @@ exports.paths = (ext,cb)->
                                 .replace(/\\\\/g,'/')
                                 .replace(/\\/g,'/')
                 _hash = md5(_str)
+                _name = _basename
                 if not _isCombo
                     _nameObj = path.parse sub_Path.replace(_path,'')
                     _nameObj.hash = md5(_str)
                     _name = _nameObj.dir + '/' + _nameObj.name + '.' + _hash.substring(0,hashLength) + _nameObj.ext
+
                 _map[_basename] = 
                     hash:_hash
                     distname:_name.replace(/\\\\/g,'/')

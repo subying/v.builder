@@ -1,0 +1,70 @@
+{
+  "bg/bg-foot-top.png": {
+    "hash": "7a41ff7c6dfd59a499f86cafdb907d73",
+    "distname": "bg/bg-foot-top.7a41ff7c6dfd.png"
+  },
+  "bg/dot.png": {
+    "hash": "2f95ab4e861764ae66f275bcbd148600",
+    "distname": "bg/dot.2f95ab4e8617.png"
+  },
+  "bg/i-main.png": {
+    "hash": "6ce1b1d5500ec00ba25c4b800aaf480f",
+    "distname": "bg/i-main.6ce1b1d5500e.png"
+  },
+  "bg/logo-nav-bg.png": {
+    "hash": "04fe3c51d410853eed68941952052b59",
+    "distname": "bg/logo-nav-bg.04fe3c51d410.png"
+  },
+  "bg/logo.jpg": {
+    "hash": "4fd0a1c260ea47c4ecd50d4e4f43e795",
+    "distname": "bg/logo.4fd0a1c260ea.jpg"
+  },
+  "bg/nav-bg.png": {
+    "hash": "250d8ef8379b33996fc94bffdfb53e17",
+    "distname": "bg/nav-bg.250d8ef8379b.png"
+  },
+  "bg/qrcode.jpg": {
+    "hash": "1c314fc313f2a0e819cef50f00091359",
+    "distname": "bg/qrcode.1c314fc313f2.jpg"
+  },
+  "bg/sale-bg1.jpg": {
+    "hash": "2868ab967a4cbba3a719d03d04a05637",
+    "distname": "bg/sale-bg1.2868ab967a4c.jpg"
+  },
+  "bg/sale-bg2.jpg": {
+    "hash": "df019cecc29074ba5cfb42443ff7ce7b",
+    "distname": "bg/sale-bg2.df019cecc290.jpg"
+  },
+  "bg/sale-bg3.jpg": {
+    "hash": "88cd96529f47359a6f53acff9ccaa7f7",
+    "distname": "bg/sale-bg3.88cd96529f47.jpg"
+  },
+  "bg/sale-bg4.jpg": {
+    "hash": "2868ab967a4cbba3a719d03d04a05637",
+    "distname": "bg/sale-bg4.2868ab967a4c.jpg"
+  },
+  "bg/tel.png": {
+    "hash": "ece27732bdb6bb1f5f3b06a0db01d1a7",
+    "distname": "bg/tel.ece27732bdb6.png"
+  },
+  "bg-foot-top.png": {
+    "hash": "7a41ff7c6dfd59a499f86cafdb907d73",
+    "distname": "bg-foot-top.7a41ff7c6dfd.png"
+  },
+  "qrcode.jpg": {
+    "hash": "1c314fc313f2a0e819cef50f00091359",
+    "distname": "qrcode.1c314fc313f2.jpg"
+  },
+  "sp/common.png": {
+    "hash": "70aa21a362459ba79baa3b8b96500f31",
+    "distname": "sp/common.70aa21a36245.png"
+  },
+  "sp/index.png": {
+    "hash": "38ca52c7cefb2b82106dd177652cd2fe",
+    "distname": "sp/index.38ca52c7cefb.png"
+  },
+  "sp/list.png": {
+    "hash": "45868a9a4fb8f6ad16fd6cd6cb9bfa48",
+    "distname": "sp/list.45868a9a4fb8.png"
+  }
+}
