@@ -19,7 +19,6 @@ uglify  = require 'uglify-js'
 # header  = require 'gulp-header'
 # pkg     = require '../package.json'
 # info    = '/* <%= pkg.name %>@v<%= pkg.version %>, @description <%= pkg.description %>, @author <%= pkg.author.name %>, @blog <%= pkg.author.url %> */\n'
-GLOBALVAR = "var STATICPATH='#{config.staticRoot}',VARS=window['VARS']={},_VM_=window['_VM_']={};\n"
 rjs     = require 'gulp-requirejs'
 plumber = require 'gulp-plumber'
 gutil   = require 'gulp-util'
@@ -29,8 +28,7 @@ errrHandler = butil.errrHandler
 md5         = butil.md5
 jsDistMapName = config.jsDistMapName
 rootPath    = config.rootPath
-
-
+GLOBALVAR = config.GLOBALVAR
 
 ### '[ ]'标志符内的依赖字符串转化为数组 ### 
 tryEval = (str)-> 

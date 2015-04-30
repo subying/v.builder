@@ -29,8 +29,6 @@ revall = require('gulp-rev-all');
 
 uglify = require('uglify-js');
 
-GLOBALVAR = "var STATICPATH='" + config.staticRoot + "',VARS=window['VARS']={},_VM_=window['_VM_']={};\n";
-
 rjs = require('gulp-requirejs');
 
 plumber = require('gulp-plumber');
@@ -48,6 +46,8 @@ md5 = butil.md5;
 jsDistMapName = config.jsDistMapName;
 
 rootPath = config.rootPath;
+
+GLOBALVAR = config.GLOBALVAR;
 
 
 /* '[ ]'标志符内的依赖字符串转化为数组 */

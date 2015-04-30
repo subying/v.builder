@@ -124,7 +124,8 @@ module.exports = function(options) {
                     if(tempArr[i] !== config.coreJsName){
                         _requireStr += 'require(["'+ tempArr[i].replace(config.prefix,'').replace(/_/g,'/') +'"]);';
                     }
-                    _str = '<script src="'+ staticRoot + js_path + 'vendor/require/require.js?_v2.4"></script>'+'\n';
+                    _str = '<script>'+config.GLOBALVAR+'</script>';
+                    _str += '<script src="'+ staticRoot + js_path + 'vendor/require/require.js?_v2.4"></script>'+'\n';
                     _str += '<script src="'+ staticRoot + js_path + 'vendor/jquery/jquery.js?_v2.4"></script>'+'\n';
                     _str += '<script src="'+ staticRoot + js_path + 'config.js?v='+cacheStr+'"></script>'+'\n';
                     _str += '<script>'+_requireStr+'</script>';

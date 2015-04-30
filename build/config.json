@@ -1,5 +1,5 @@
 {
-    "evn":"dev",
+    "evn":"debug",
     "isCombo":true,
     "cndDomain":"static.local",
     "srcPathName":"_src",

@@ -1,4 +1,4 @@
-var STATICPATH='http://static.local/',VARS=window['VARS']={},_VM_=window['_VM_']={};
+var STATICPATH='http://static.local',VARS=window['VARS']={},_VM_=window['_VM_']={};
 /*!
  * jQuery JavaScript Library v1.8.3
  * http://jquery.com/
