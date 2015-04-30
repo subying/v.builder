@@ -3,6 +3,7 @@
 .*.swp
 .*.swo
 ._*
+.tags
 .DS_Store
 /Debug/
 /debug/

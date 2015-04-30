@@ -1,3 +1,4 @@
+;(function() {
 var lib_easing, lib_slide, mods_index_slider;
 lib_easing = function () {
   $.easing['jswing'] = $.easing['swing'];
@@ -870,3 +871,4 @@ mods_index_slider = function (slide) {
   };
   return exports;
 }(lib_slide);
+}());

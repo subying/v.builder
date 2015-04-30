@@ -5,14 +5,14 @@
 
     if (typeof module === "object" && typeof module.exports === "object") {
         // For CommonJS and CommonJS-like environments where a proper `window`
-        // is present, execute the factory and get avalon.
+        // is present, execute the factory and get smcore.
         // For environments that do not have a `window` with a `document`
         // (such as Node.js), expose a factory as module.exports.
         // This accentuates the need for the creation of a real `window`.
-        // e.g. var avalon = require("avalon")(window);
+        // e.g. var smcore = require("smcore")(window);
         module.exports = global.document ? factory(global, true) : function(w) {
             if (!w.document) {
-                throw new Error("Avalon requires a window with a document")
+                throw new Error("smcore requires a window with a document")
             }
             return factory(w)
         }
@@ -30,13 +30,13 @@ var expose = new Date() - 0
 //http://stackoverflow.com/questions/7290086/javascript-use-strict-and-nicks-find-global-function
 var DOC = window.document
 var head = DOC.getElementsByTagName("head")[0] //HEAD元素
-var ifGroup = head.insertBefore(document.createElement("avalon"), head.firstChild) //避免IE6 base标签BUG
-ifGroup.innerHTML = "X<style id='avalonStyle'>.avalonHide{ display: none!important }</style>"
+var ifGroup = head.insertBefore(document.createElement("smcore"), head.firstChild) //避免IE6 base标签BUG
+ifGroup.innerHTML = "X<style id='smcoreStyle'>.smcoreHide{ display: none!important }</style>"
 ifGroup.setAttribute("vm-skip", "1")
-ifGroup.className = "avalonHide"
+ifGroup.className = "smcoreHide"
 var rnative = /\[native code\]/ //判定是否原生函数
 function log() {
-    if (window.console && avalon.config.debug) {
+    if (window.console && smcore.config.debug) {
         // http://stackoverflow.com/questions/8785624/how-to-safely-wrap-console-log
         Function.apply.call(console.log, console, arguments)
     }
@@ -86,7 +86,7 @@ function oneObject(array, val) {
 
 //生成UUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
 var generateID = function(prefix) {
-    prefix = prefix || "avalon"
+    prefix = prefix || "smcore"
     return (prefix + Math.random() + Math.random()).replace(/0\./g, "")
 }
 function IE() {
@@ -99,12 +99,12 @@ function IE() {
 }
 var IEVersion = IE()
 
-avalon = function(el) { //创建jQuery式的无new 实例化结构
-    return new avalon.init(el)
+smcore = function(el) { //创建jQuery式的无new 实例化结构
+    return new smcore.init(el)
 }
 
 /*视浏览器情况采用最快的异步回调*/
-avalon.nextTick = new function() {// jshint ignore:line
+smcore.nextTick = new function() {// jshint ignore:line
     var tickImmediate = window.setImmediate
     var tickObserver = window.MutationObserver
     var tickPost = W3C && window.postMessage
@@ -122,7 +122,7 @@ avalon.nextTick = new function() {// jshint ignore:line
     }
 
     if (tickObserver) {
-        var node = document.createTextNode("avalon")
+        var node = document.createTextNode("smcore")
         new tickObserver(callback).observe(node, {characterData: true})// jshint ignore:line
         return function(fn) {
             queue.push(fn)
@@ -150,14 +150,14 @@ avalon.nextTick = new function() {// jshint ignore:line
     }
 }// jshint ignore:line
 /*********************************************************************
- *                 avalon的静态方法定义区                              *
+ *                 smcore的静态方法定义区                              *
  **********************************************************************/
-avalon.init = function(el) {
+smcore.init = function(el) {
     this[0] = this.element = el
 }
-avalon.fn = avalon.prototype = avalon.init.prototype
+smcore.fn = smcore.prototype = smcore.init.prototype
 
-avalon.type = function(obj) { //取得目标的类型
+smcore.type = function(obj) { //取得目标的类型
     if (obj == null) {
         return String(obj)
     }
@@ -176,9 +176,9 @@ var isFunction = typeof alert === "object" ? function(fn) {
 } : function(fn) {
     return serialize.call(fn) === "[object Function]"
 }
-avalon.isFunction = isFunction
+smcore.isFunction = isFunction
 
-avalon.isWindow = function(obj) {
+smcore.isWindow = function(obj) {
     if (!obj)
         return false
     // 利用IE678 window == document为true,document == window竟然为false的神奇特性
@@ -190,16 +190,16 @@ function isWindow(obj) {
     return rwindow.test(serialize.call(obj))
 }
 if (isWindow(window)) {
-    avalon.isWindow = isWindow
+    smcore.isWindow = isWindow
 }
 var enu
-for (enu in avalon({})) {
+for (enu in smcore({})) {
     break
 }
 var enumerateBUG = enu !== "0" //IE6下为true, 其他为false
 /*判定是否是一个朴素的javascript对象（Object），不是DOM对象，不是BOM对象，不是自定义类的实例*/
-avalon.isPlainObject = function(obj, key) {
-    if (!obj || avalon.type(obj) !== "object" || obj.nodeType || avalon.isWindow(obj)) {
+smcore.isPlainObject = function(obj, key) {
+    if (!obj || smcore.type(obj) !== "object" || obj.nodeType || smcore.isWindow(obj)) {
         return false;
     }
     try { //IE内置对象没有constructor
@@ -219,13 +219,13 @@ avalon.isPlainObject = function(obj, key) {
     return key === void 0 || ohasOwn.call(obj, key)
 }
 if (rnative.test(Object.getPrototypeOf)) {
-    avalon.isPlainObject = function(obj) {
+    smcore.isPlainObject = function(obj) {
         // 简单的 typeof obj === "object"检测，会致使用isPlainObject(window)在opera下通不过
         return serialize.call(obj) === "[object Object]" && Object.getPrototypeOf(obj) === oproto
     }
 }
 //与jQuery.extend方法，可用于浅拷贝，深拷贝
-avalon.mix = avalon.fn.mix = function() {
+smcore.mix = smcore.fn.mix = function() {
     var options, name, src, copy, copyIsArray, clone,
             target = arguments[0] || {},
             i = 1,
@@ -265,17 +265,17 @@ avalon.mix = avalon.fn.mix = function() {
                 if (target === copy) {
                     continue
                 }
-                if (deep && copy && (avalon.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
+                if (deep && copy && (smcore.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
 
                     if (copyIsArray) {
                         copyIsArray = false
                         clone = src && Array.isArray(src) ? src : []
 
                     } else {
-                        clone = src && avalon.isPlainObject(src) ? src : {}
+                        clone = src && smcore.isPlainObject(src) ? src : {}
                     }
 
-                    target[name] = avalon.mix(deep, clone, copy)
+                    target[name] = smcore.mix(deep, clone, copy)
                 } else if (copy !== void 0) {
                     target[name] = copy
                 }
@@ -289,7 +289,7 @@ function _number(a, len) { //用于模拟slice, splice的效果
     a = Math.floor(a) || 0
     return a < 0 ? Math.max(len + a, 0) : Math.min(a, len);
 }
-avalon.mix({
+smcore.mix({
     rword: rword,
     subscribers: subscribers,
     version: 1.42,
@@ -318,15 +318,15 @@ avalon.mix({
     },
     /*将一个以空格或逗号隔开的字符串或数组,转换成一个键值都为1的对象*/
     oneObject: oneObject,
-    /* avalon.range(10)
+    /* smcore.range(10)
      => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-     avalon.range(1, 11)
+     smcore.range(1, 11)
      => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-     avalon.range(0, 30, 5)
+     smcore.range(0, 30, 5)
      => [0, 5, 10, 15, 20, 25]
-     avalon.range(0, -10, -1)
+     smcore.range(0, -10, -1)
      => [0, -1, -2, -3, -4, -5, -6, -7, -8, -9]
-     avalon.range(0)
+     smcore.range(0)
      => []*/
     range: function(start, end, step) { // 用于生成整数数组
         step || (step = 1)
@@ -346,7 +346,7 @@ avalon.mix({
     eventHooks: {},
     /*绑定事件*/
     bind: function(el, type, fn, phase) {
-        var hooks = avalon.eventHooks
+        var hooks = smcore.eventHooks
         var hook = hooks[type]
         if (typeof hook === "object") {
             type = hook.type
@@ -366,7 +366,7 @@ avalon.mix({
     },
     /*卸载事件*/
     unbind: function(el, type, fn, phase) {
-        var hooks = avalon.eventHooks
+        var hooks = smcore.eventHooks
         var hook = hooks[type]
         var callback = fn || noop
         if (typeof hook === "object") {
@@ -383,11 +383,11 @@ avalon.mix({
     },
     /*读写删除元素节点的样式*/
     css: function(node, name, value) {
-        if (node instanceof avalon) {
+        if (node instanceof smcore) {
             node = node[0]
         }
         var prop = /[_-]/.test(name) ? camelize(name) : name, fn
-        name = avalon.cssName(prop) || prop
+        name = smcore.cssName(prop) || prop
         if (value === void 0 || typeof value === "boolean") { //获取样式
             fn = cssHooks[prop + ":get"] || cssHooks["@:get"]
             if (name === "background") {
@@ -401,7 +401,7 @@ avalon.mix({
             if (value == null || value !== value) {
                 return
             }
-            if (isFinite(value) && !avalon.cssNumber[prop]) {
+            if (isFinite(value) && !smcore.cssNumber[prop]) {
                 value += "px"
             }
             fn = cssHooks[prop + ":set"] || cssHooks["@:set"]
@@ -428,7 +428,7 @@ avalon.mix({
     },
     //收集元素的data-{{prefix}}-*属性，并转换为对象
     getWidgetData: function(elem, prefix) {
-        var raw = avalon(elem).data()
+        var raw = smcore(elem).data()
         var result = {}
         for (var i in raw) {
             if (i.indexOf(prefix) === 0) {
@@ -454,14 +454,14 @@ avalon.mix({
         remove: function(target, item) {
             var index = target.indexOf(item)
             if (~index)
-                return avalon.Array.removeAt(target, index)
+                return smcore.Array.removeAt(target, index)
             return false
         }
     }
 })
 
-var bindingHandlers = avalon.bindingHandlers = {}
-var bindingExecutors = avalon.bindingExecutors = {}
+var bindingHandlers = smcore.bindingHandlers = {}
+var bindingExecutors = smcore.bindingExecutors = {}
 
 /*判定是否类数组，如节点集合，纯数组，arguments与拥有非负整数的length属性的纯JS对象*/
 function isArrayLike(obj) {
@@ -644,7 +644,7 @@ function iterator(vars, body, ret) {
     /* jshint ignore:end */
 }
 if (!rnative.test([].map)) {
-    avalon.mix(ap, {
+    smcore.mix(ap, {
         //定位操作，返回数组中第一个等于给定参数的元素的索引值。
         indexOf: function (item, index) {
             var n = this.length,
@@ -693,7 +693,7 @@ function fixContains(root, el) {
         return false
     }
 }
-avalon.contains = fixContains
+smcore.contains = fixContains
 //IE6-11的文档对象没有contains
 if (!DOC.contains) {
     DOC.contains = function (b) {
@@ -741,7 +741,7 @@ if (window.SVGElement) {
                 set: function (html) {
                     var tagName = this.tagName.toLowerCase(),
                             par = this.parentNode,
-                            frag = avalon.parseHTML(html)
+                            frag = smcore.parseHTML(html)
                     // 操作的svg，直接插入
                     if (tagName === "svg") {
                         par.insertBefore(frag, this)
@@ -764,9 +764,9 @@ if (window.SVGElement) {
                     return s.replace(ropen, "").replace(rclose, "")
                 },
                 set: function (html) {
-                    if (avalon.clearHTML) {
-                        avalon.clearHTML(this)
-                        var frag = avalon.parseHTML(html)
+                    if (smcore.clearHTML) {
+                        smcore.clearHTML(this)
+                        var frag = smcore.parseHTML(html)
                         enumerateNode(frag, this)
                     }
                 }
@@ -807,10 +807,10 @@ function fixEvent(event) {
     return ret
 }
 
-var eventHooks = avalon.eventHooks
+var eventHooks = smcore.eventHooks
 //针对firefox, chrome修正mouseenter, mouseleave
 if (!("onmouseenter" in root)) {
-    avalon.each({
+    smcore.each({
         mouseenter: "mouseover",
         mouseleave: "mouseout"
     }, function (origType, fixType) {
@@ -830,7 +830,7 @@ if (!("onmouseenter" in root)) {
     })
 }
 //针对IE9+, w3c修正animationend
-avalon.each({
+smcore.each({
     AnimationEvent: "animationend",
     WebKitAnimationEvent: "webkitAnimationEnd"
 }, function (construct, fixType) {
@@ -892,7 +892,7 @@ function kernel(settings) {
         if (typeof kernel.plugins[p] === "function") {
             kernel.plugins[p](val)
         } else if (typeof kernel[p] === "object") {
-            avalon.mix(kernel[p], val)
+            smcore.mix(kernel[p], val)
         } else {
             kernel[p] = val
         }
@@ -942,12 +942,12 @@ kernel.plugins['interpolate'](["{{", "}}"])
 kernel.paths = {}
 kernel.shim = {}
 kernel.maxRepeatSize = 100
-avalon.config = kernel
-var ravalon = /(\w+)\[(avalonctrl)="(\S+)"\]/
+smcore.config = kernel
+var rsmcore = /(\w+)\[(smcorectrl)="(\S+)"\]/
 var findNodes = DOC.querySelectorAll ? function(str) {
     return DOC.querySelectorAll(str)
 } : function(str) {
-    var match = str.match(ravalon)
+    var match = str.match(rsmcore)
     var all = DOC.getElementsByTagName(match[1])
     var nodes = []
     for (var i = 0, el; el = all[i++]; ) {
@@ -1004,8 +1004,8 @@ var EventBus = {
         var args = aslice.call(arguments, 1)
         var detail = [type].concat(args)
         if (special === "all") {
-            for (i in avalon.vmodels) {
-                v = avalon.vmodels[i]
+            for (i in smcore.vmodels) {
+                v = smcore.vmodels[i]
                 if (v !== this) {
                     v.$fire.apply(v, detail)
                 }
@@ -1014,8 +1014,8 @@ var EventBus = {
             var elements = events.expr ? findNodes(events.expr) : []
             if (elements.length === 0)
                 return
-            for (i in avalon.vmodels) {
-                v = avalon.vmodels[i]
+            for (i in smcore.vmodels) {
+                v = smcore.vmodels[i]
                 if (v !== this) {
                     if (v.$events.expr) {
                         var eventNodes = findNodes(v.$events.expr)
@@ -1029,7 +1029,7 @@ var EventBus = {
                                 var ok = special === "down" ? element.contains(node) : //向下捕获
                                         node.contains(element) //向上冒泡
                                 if (ok) {
-                                    node._avalon = v //符合条件的加一个标识
+                                    node._smcore = v //符合条件的加一个标识
                                 }
                             });
                         })
@@ -1040,10 +1040,10 @@ var EventBus = {
             var nodes = DOC.getElementsByTagName("*") //实现节点排序
             var alls = []
             Array.prototype.forEach.call(nodes, function (el) {
-                if (el._avalon) {
-                    alls.push(el._avalon)
-                    el._avalon = ""
-                    el.removeAttribute("_avalon")
+                if (el._smcore) {
+                    alls.push(el._smcore)
+                    el._smcore = ""
+                    el.removeAttribute("_smcore")
                 }
             })
             if (special === "up") {
@@ -1072,15 +1072,15 @@ var EventBus = {
 /*********************************************************************
  *                           modelFactory                             *
  **********************************************************************/
-//avalon最核心的方法的两个方法之一（另一个是avalon.scan），返回一个ViewModel(VM)
-var VMODELS = avalon.vmodels = {} //所有vmodel都储存在这里
-avalon.define = function (id, factory) {
+//smcore最核心的方法的两个方法之一（另一个是smcore.scan），返回一个ViewModel(VM)
+var VMODELS = smcore.vmodels = {} //所有vmodel都储存在这里
+smcore.define = function (id, factory) {
     var $id = id.$id || id
     if (!$id) {
         log("warning: vm必须指定$id")
     }
     if (VMODELS[$id]) {
-        log("warning: " + $id + " 已经存在于avalon.vmodels中")
+        log("warning: " + $id + " 已经存在于smcore.vmodels中")
     }
     if (typeof id === "object") {
         var model = modelFactory(id)
@@ -1186,7 +1186,7 @@ function modelFactory(source, $special, $model) {
             }
             //总共产生三种accessor
             $events[name] = []
-            var valueType = avalon.type(val)
+            var valueType = smcore.type(val)
             var accessor = function (newValue) {
                 var name = accessor._name
                 var $vmodel = this
@@ -1351,7 +1351,7 @@ function objectFactory(parent, name, value, valueType) {
     var son = parent[name]
     if (valueType === "array") {
         if (!Array.isArray(value) || son === value) {
-            return son //fix https://github.com/RubyLouvre/avalon/issues/261
+            return son //fix https://github.com/RubyLouvre/smcore/issues/261
         }
         son._.$unwatch()
         son.clear()
@@ -1370,7 +1370,7 @@ function objectFactory(parent, name, value, valueType) {
         midway[ret.$id] = function (data) {
             while (data = iterators.shift()) {
                 (function (el) {
-                    avalon.nextTick(function () {
+                    smcore.nextTick(function () {
                         var type = el.type
                         if (type && bindingHandlers[type]) { //#753
                             el.rollback && el.rollback() //还原 vm-with vm-on
@@ -1386,7 +1386,7 @@ function objectFactory(parent, name, value, valueType) {
 }
 //===================修复浏览器对Object.defineProperties的支持=================
 if (!canHideOwn) {
-    if ("__defineGetter__" in avalon) {
+    if ("__defineGetter__" in smcore) {
         defineProperty = function (obj, prop, desc) {
             if ('value' in desc) {
                 obj[prop] = desc.value
@@ -1519,7 +1519,7 @@ function Collection(model) {
     for (var i in EventBus) {
         array[i] = EventBus[i]
     }
-    avalon.mix(array, CollectionPrototype)
+    smcore.mix(array, CollectionPrototype)
     return array
 }
 
@@ -1530,7 +1530,7 @@ function mutateArray(method, pos, n, index, method2, pos2, n2) {
             case "add":
                 /* jshint ignore:start */
                 var array = this.$model.slice(pos, pos + n).map(function (el) {
-                    if (rcomplexType.test(avalon.type(el))) {
+                    if (rcomplexType.test(smcore.type(el))) {
                         return el.$id ? el : modelFactory(el, 0, el)
                     } else {
                         return el
@@ -1672,7 +1672,7 @@ var CollectionPrototype = {
     },
     set: function (index, val) {
         if (index >= 0) {
-            var valueType = avalon.type(val)
+            var valueType = smcore.type(val)
             if (val && val.$model) {
                 val = val.$model
             }
@@ -1745,7 +1745,7 @@ var ronduplex = /^(duplex|on)$/
 
 function registerSubscriber(data) {
     Registry[expose] = data //暴光此函数,方便collectSubscribers收集
-    avalon.openComputedCollect = true
+    smcore.openComputedCollect = true
     var fn = data.evaluator
     if (fn) { //如果是求值函数
         try {
@@ -1765,13 +1765,13 @@ function registerSubscriber(data) {
             }
         }
     }
-    avalon.openComputedCollect = false
+    smcore.openComputedCollect = false
     delete Registry[expose]
 }
 
 function collectSubscribers(list) { //收集依赖于这个访问器的订阅者
     var data = Registry[expose]
-    if (list && data && avalon.Array.ensure(list, data) && data.element) { //只有数组不存在此元素才push进去
+    if (list && data && smcore.Array.ensure(list, data) && data.element) { //只有数组不存在此元素才push进去
         addSubscribers(data, list)
     }
 }
@@ -1808,9 +1808,9 @@ function isRemove(el) {
         return true
     }
     return el.msRetain ? 0 : (el.nodeType === 1 ? typeof el.sourceIndex === "number" ?
-            el.sourceIndex === 0 : !root.contains(el) : !avalon.contains(root, el))
+            el.sourceIndex === 0 : !root.contains(el) : !smcore.contains(root, el))
 }
-var $$subscribers = avalon.$$subscribers = []
+var $$subscribers = smcore.$$subscribers = []
 var beginTime = new Date()
 var oldInfo = {}
 function removeSubscribers() {
@@ -1839,9 +1839,9 @@ function removeSubscribers() {
         }
     })
     i = n
-    //avalon.log("需要检测的个数 " + i)
+    //smcore.log("需要检测的个数 " + i)
     if (diff) {
-        //avalon.log("有需要移除的元素")
+        //smcore.log("有需要移除的元素")
         while (obj = $$subscribers[--i]) {
             data = obj.data
             if (data.element === void 0)
@@ -1850,7 +1850,7 @@ function removeSubscribers() {
                 k++
                 $$subscribers.splice(i, 1)
                 delete $$subscribers[obj.$$uuid]
-                avalon.Array.remove(obj.list, data)
+                smcore.Array.remove(obj.list, data)
                 //log("debug: remove " + data.type)
                 disposeData(data)
                 obj.data = obj.list = null
@@ -1858,7 +1858,7 @@ function removeSubscribers() {
         }
     }
     oldInfo = newInfo
-   // avalon.log("已经移除的个数 " + k)
+   // smcore.log("已经移除的个数 " + k)
     beginTime = new Date()
 }
 
@@ -1912,7 +1912,7 @@ var scriptTypes = oneObject(["", "text/javascript", "text/ecmascript", "applicat
 var rnest = /<(?:tb|td|tf|th|tr|col|opt|leg|cap|area)/ //需要处理套嵌关系的标签
 var script = DOC.createElement("script")
 var rhtml = /<|&#?\w+;/
-avalon.parseHTML = function (html) {
+smcore.parseHTML = function (html) {
     var fragment = hyperspace.cloneNode(false)
     if (typeof html !== "string") {
         return fragment
@@ -1995,7 +1995,7 @@ function fixVML(node) {
         node.style.zoom = 1 //hasLayout
     }
 }
-avalon.innerHTML = function (node, html) {
+smcore.innerHTML = function (node, html) {
     if (!W3C && (!rcreate.test(html) && !rnest.test(html))) {
         try {
             node.innerHTML = html
@@ -2006,7 +2006,7 @@ avalon.innerHTML = function (node, html) {
     var a = this.parseHTML(html)
     this.clearHTML(node).appendChild(a)
 }
-avalon.clearHTML = function (node) {
+smcore.clearHTML = function (node) {
     node.textContent = ""
     while (node.firstChild) {
         node.removeChild(node.firstChild)
@@ -2018,7 +2018,7 @@ avalon.clearHTML = function (node) {
  *                           扫描系统                                 *
  **********************************************************************/
 
-avalon.scan = function(elem, vmodel, group) {
+smcore.scan = function(elem, vmodel, group) {
     elem = elem || root
     var vmodels = vmodel ? [].concat(vmodel) : []
     scanTag(elem, vmodels)
@@ -2041,9 +2041,9 @@ function checkScan(elem, callback, innerHTML) {
 
 
 function createSignalTower(elem, vmodel) {
-    var id = elem.getAttribute("avalonctrl") || vmodel.$id
-    elem.setAttribute("avalonctrl", id)
-    vmodel.$events.expr = elem.tagName + '[avalonctrl="' + id + '"]'
+    var id = elem.getAttribute("smcorectrl") || vmodel.$id
+    elem.setAttribute("smcorectrl", id)
+    vmodel.$events.expr = elem.tagName + '[smcorectrl="' + id + '"]'
 }
 
 var getBindingCallback = function(elem, name, vmodels) {
@@ -2062,14 +2062,14 @@ function executeBindings(bindings, vmodels) {
         data.vmodels = vmodels
         bindingHandlers[data.type](data, vmodels)
         if (data.evaluator && data.element && data.element.nodeType === 1) { //移除数据绑定，防止被二次解析
-            //chrome使用removeAttributeNode移除不存在的特性节点时会报错 https://github.com/RubyLouvre/avalon/issues/99
+            //chrome使用removeAttributeNode移除不存在的特性节点时会报错 https://github.com/RubyLouvre/smcore/issues/99
             data.element.removeAttribute(data.name)
         }
     }
     bindings.length = 0
 }
 
-//https://github.com/RubyLouvre/avalon/issues/636
+//https://github.com/RubyLouvre/smcore/issues/636
 var mergeTextNodes = IEVersion && window.MutationObserver ? function (elem) {
     var node = elem.firstChild, text
     while (node) {
@@ -2108,7 +2108,7 @@ function bindingSorter(a, b) {
 
 function scanAttr(elem, vmodels) {
     //防止setAttribute, removeAttribute时 attributes自动被同步,导致for循环出错
-    var attributes = getAttributes ? getAttributes(elem) : avalon.slice(elem.attributes)
+    var attributes = getAttributes ? getAttributes(elem) : smcore.slice(elem.attributes)
     var bindings = [],
             msData = {},
             match
@@ -2150,7 +2150,7 @@ function scanAttr(elem, vmodels) {
                     }
                     if (type === "html" || type === "text") {
                         var token = getToken(value)
-                        avalon.mix(binding, token)
+                        smcore.mix(binding, token)
                         binding.filters = binding.filters.replace(rhasHtml, function () {
                             binding.type = "html"
                             binding.group = 1
@@ -2211,7 +2211,7 @@ if (!"1" [0]) {
     //        window.onload = function() {
     //            var body = document.body
     //            for (var i = 0, el; el = body.children[i++]; ) {
-    //                avalon.log(el.outerHTML)
+    //                smcore.log(el.outerHTML)
     //            }
     //        }
     //依次输出<SECTION>, </SECTION>
@@ -2283,7 +2283,7 @@ function scanTag(elem, vmodels, node) {
     if (typeof a === "string") {
         return
     } else if (node = b || c) {
-        var newVmodel = avalon.vmodels[node.value]
+        var newVmodel = smcore.vmodels[node.value]
         if (!newVmodel) {
             return
         }
@@ -2291,7 +2291,7 @@ function scanTag(elem, vmodels, node) {
         vmodels = node === b ? [newVmodel] : [newVmodel].concat(vmodels)
         var name = node.name
         elem.removeAttribute(name) //removeAttributeNode不会刷新[vm-controller]样式规则
-        avalon(elem).removeClass(name)
+        smcore(elem).removeClass(name)
         createSignalTower(elem, newVmodel)
     }
     scanAttr(elem, vmodels) //扫描特性节点
@@ -2391,7 +2391,7 @@ function scanText(textNode, vmodels) {
 }
 
 /*********************************************************************
- *                  avalon的原型方法定义区                            *
+ *                  smcore的原型方法定义区                            *
  **********************************************************************/
 
 function hyphen(target) {
@@ -2454,7 +2454,7 @@ var fakeClassListMethods = {
 
 
     "add,remove".replace(rword, function(method) {
-        avalon.fn[method + "Class"] = function(cls) {
+        smcore.fn[method + "Class"] = function(cls) {
             var el = this[0]
             //https://developer.mozilla.org/zh-CN/docs/Mozilla/Firefox/Releases/26
             if (cls && typeof cls === "string" && el && el.nodeType === 1) {
@@ -2465,7 +2465,7 @@ var fakeClassListMethods = {
             return this
         }
     })
-    avalon.fn.mix({
+    smcore.fn.mix({
         hasClass: function(cls) {
             var el = this[0] || {}
             return el.nodeType === 1 && fakeClassList(el).contains(cls)
@@ -2517,12 +2517,12 @@ var fakeClassListMethods = {
             return this
         },
         css: function(name, value) {
-            if (avalon.isPlainObject(name)) {
+            if (smcore.isPlainObject(name)) {
                 for (var i in name) {
-                    avalon.css(this, i, name[i])
+                    smcore.css(this, i, name[i])
                 }
             } else {
-                var ret = avalon.css(this, name, value)
+                var ret = smcore.css(this, name, value)
             }
             return ret !== void 0 ? ret : this
         },
@@ -2544,33 +2544,33 @@ var fakeClassListMethods = {
                 if (offsetParent[0].tagName !== "HTML") {
                     parentOffset = offsetParent.offset()
                 }
-                parentOffset.top += avalon.css(offsetParent[0], "borderTopWidth", true)
-                parentOffset.left += avalon.css(offsetParent[0], "borderLeftWidth", true)
+                parentOffset.top += smcore.css(offsetParent[0], "borderTopWidth", true)
+                parentOffset.left += smcore.css(offsetParent[0], "borderLeftWidth", true)
 
                 // Subtract offsetParent scroll positions
                 parentOffset.top -= offsetParent.scrollTop()
                 parentOffset.left -= offsetParent.scrollLeft()
             }
             return {
-                top: offset.top - parentOffset.top - avalon.css(elem, "marginTop", true),
-                left: offset.left - parentOffset.left - avalon.css(elem, "marginLeft", true)
+                top: offset.top - parentOffset.top - smcore.css(elem, "marginTop", true),
+                left: offset.left - parentOffset.left - smcore.css(elem, "marginLeft", true)
             }
         },
         offsetParent: function() {
             var offsetParent = this[0].offsetParent
-            while (offsetParent && avalon.css(offsetParent, "position") === "static") {
+            while (offsetParent && smcore.css(offsetParent, "position") === "static") {
                 offsetParent = offsetParent.offsetParent;
             }
-            return avalon(offsetParent || root)
+            return smcore(offsetParent || root)
         },
         bind: function(type, fn, phase) {
             if (this[0]) { //此方法不会链
-                return avalon.bind(this[0], type, fn, phase)
+                return smcore.bind(this[0], type, fn, phase)
             }
         },
         unbind: function(type, fn, phase) {
             if (this[0]) {
-                avalon.unbind(this[0], type, fn, phase)
+                smcore.unbind(this[0], type, fn, phase)
             }
             return this
         },
@@ -2598,7 +2598,7 @@ var fakeClassListMethods = {
                 return data
             data = data === "true" ? true :
                 data === "false" ? false :
-                data === "null" ? null : +data + "" === data ? +data : rbrace.test(data) ? avalon.parseJSON(data) : data
+                data === "null" ? null : +data + "" === data ? +data : rbrace.test(data) ? smcore.parseJSON(data) : data
         } catch (e) {}
         return data
     }
@@ -2607,7 +2607,7 @@ var rbrace = /(?:\{[\s\S]*\}|\[[\s\S]*\])$/,
     rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g,
     rvalidescape = /\\(?:["\\\/bfnrt]|u[\da-fA-F]{4})/g,
     rvalidtokens = /"[^"\\\r\n]*"|true|false|null|-?(?:\d+\.|)\d+(?:[eE][+-]?\d+|)/g
-avalon.parseJSON = window.JSON ? JSON.parse : function(data) {
+smcore.parseJSON = window.JSON ? JSON.parse : function(data) {
     if (typeof data === "string") {
         data = data.trim();
         if (data) {
@@ -2617,24 +2617,24 @@ avalon.parseJSON = window.JSON ? JSON.parse : function(data) {
                 return (new Function("return " + data))() // jshint ignore:line
             }
         }
-        avalon.error("Invalid JSON: " + data)
+        smcore.error("Invalid JSON: " + data)
     }
     return data
 }
 
-//生成avalon.fn.scrollLeft, avalon.fn.scrollTop方法
-avalon.each({
+//生成smcore.fn.scrollLeft, smcore.fn.scrollTop方法
+smcore.each({
     scrollLeft: "pageXOffset",
     scrollTop: "pageYOffset"
 }, function(method, prop) {
-    avalon.fn[method] = function(val) {
+    smcore.fn[method] = function(val) {
         var node = this[0] || {}, win = getWindow(node),
             top = method === "scrollTop"
         if (!arguments.length) {
             return win ? (prop in win) ? win[prop] : root[method] : node[method]
         } else {
             if (win) {
-                win.scrollTo(!top ? val : avalon(win).scrollLeft(), top ? val : avalon(win).scrollTop())
+                win.scrollTo(!top ? val : smcore(win).scrollLeft(), top ? val : smcore(win).scrollTop())
             } else {
                 node[method] = val
             }
@@ -2646,14 +2646,14 @@ function getWindow(node) {
     return node.window && node.document ? node : node.nodeType === 9 ? node.defaultView || node.parentWindow : false;
 }
 //=============================css相关=======================
-var cssHooks = avalon.cssHooks = {}
+var cssHooks = smcore.cssHooks = {}
 var prefixes = ["", "-webkit-", "-o-", "-moz-", "-vm-"]
 var cssMap = {
     "float": W3C ? "cssFloat" : "styleFloat"
 }
-avalon.cssNumber = oneObject("columnCount,order,fillOpacity,fontWeight,lineHeight,opacity,orphans,widows,zIndex,zoom")
+smcore.cssNumber = oneObject("columnCount,order,fillOpacity,fontWeight,lineHeight,opacity,orphans,widows,zIndex,zoom")
 
-avalon.cssName = function(name, host, camelCase) {
+smcore.cssName = function(name, host, camelCase) {
     if (cssMap[name]) {
         return cssMap[name]
     }
@@ -2756,7 +2756,7 @@ if (window.getComputedStyle) {
     cssHooks[name + ":get"] = function(node) {
         var computed = cssHooks["@:get"](node, name)
         return /px$/.test(computed) ? computed :
-            avalon(node).position()[name] + "px"
+            smcore(node).position()[name] + "px"
     }
 })
 
@@ -2800,13 +2800,13 @@ var rdisplayswap = /^(none|table(?!-c[ea]).+)/
                 which = name === "Width" ? ["Left", "Right"] : ["Top", "Bottom"]
                 var ret = node[offsetProp] // border-box 0
                 if (boxSizing === 2) { // margin-box 2
-                    return ret + avalon.css(node, "margin" + which[0], true) + avalon.css(node, "margin" + which[1], true)
+                    return ret + smcore.css(node, "margin" + which[0], true) + smcore.css(node, "margin" + which[1], true)
                 }
                 if (boxSizing < 0) { // padding-box  -2
-                    ret = ret - avalon.css(node, "border" + which[0] + "Width", true) - avalon.css(node, "border" + which[1] + "Width", true)
+                    ret = ret - smcore.css(node, "border" + which[0] + "Width", true) - smcore.css(node, "border" + which[1] + "Width", true)
                 }
                 if (boxSizing === -4) { // content-box -4
-                    ret = ret - avalon.css(node, "padding" + which[0], true) - avalon.css(node, "padding" + which[1], true)
+                    ret = ret - smcore.css(node, "padding" + which[0], true) - smcore.css(node, "padding" + which[1], true)
                 }
                 return ret
             }
@@ -2824,7 +2824,7 @@ var rdisplayswap = /^(none|table(?!-c[ea]).+)/
             }
             return val;
         }
-        avalon.fn[method] = function(value) { //会忽视其display
+        smcore.fn[method] = function(value) { //会忽视其display
             var node = this[0]
             if (arguments.length === 0) {
                 if (node.setTimeout) { //取得窗口尺寸,IE9后可以用node.innerWidth /innerHeight代替
@@ -2842,14 +2842,14 @@ var rdisplayswap = /^(none|table(?!-c[ea]).+)/
                 return this.css(method, value)
             }
         }
-        avalon.fn["inner" + name] = function() {
+        smcore.fn["inner" + name] = function() {
             return cssHooks[method + ":get"](this[0], void 0, -2)
         }
-        avalon.fn["outer" + name] = function(includeMargin) {
+        smcore.fn["outer" + name] = function(includeMargin) {
             return cssHooks[method + ":get"](this[0], void 0, includeMargin === true ? 2 : 0)
         }
     })
-    avalon.fn.offset = function() { //取得距离页面左右角的坐标
+    smcore.fn.offset = function() { //取得距离页面左右角的坐标
         var node = this[0],
             box = {
                 left: 0,
@@ -2862,7 +2862,7 @@ var rdisplayswap = /^(none|table(?!-c[ea]).+)/
             body = doc.body,
             root = doc.documentElement,
             win = doc.defaultView || doc.parentWindow
-        if (!avalon.contains(root, node)) {
+        if (!smcore.contains(root, node)) {
             return box
         }
         //http://hkom.blog1.fc2.com/?mode=m&no=750 body的偏移量是不包含margin的
@@ -3043,7 +3043,7 @@ function parseFilter(val, filters) {
             .replace(rthimLeftParentheses, function () {
                 return '",'
             }) + "]"
-    return  "return avalon.filters.$filter(" + val + ", " + filters + ")"
+    return  "return smcore.filters.$filter(" + val + ", " + filters + ")"
 }
 
 function parseExpr(code, scopes, data) {
@@ -3072,7 +3072,7 @@ function parseExpr(code, scopes, data) {
         return
     }
     if (dataType !== "duplex" && (code.indexOf("||") > -1 || code.indexOf("&&") > -1)) {
-        //https://github.com/RubyLouvre/avalon/issues/583
+        //https://github.com/RubyLouvre/smcore/issues/583
         data.vars.forEach(function (v) {
             var reg = new RegExp("\\b" + v + "(?:\\.\\w+|\\[\\w+\\])+", "ig")
             code = code.replace(reg, function (_) {
@@ -3174,7 +3174,7 @@ function parseExprProxy(code, scopes, data, tokens, noregister) {
         registerSubscriber(data)
     }
 }
-avalon.parseExprProxy = parseExprProxy
+smcore.parseExprProxy = parseExprProxy
 var bools = ["autofocus,autoplay,async,allowTransparency,checked,controls",
     "declare,disabled,defer,defaultChecked,defaultSelected",
     "contentEditable,isMap,loop,multiple,noHref,noResize,noShade",
@@ -3209,7 +3209,7 @@ var getXHR = function() {
     return new(window.XMLHttpRequest || ActiveXObject)("Microsoft.XMLHTTP") // jshint ignore:line
 }
 
-var cacheTmpls = avalon.templateCache = {}
+var cacheTmpls = smcore.templateCache = {}
 
 bindingHandlers.attr = function(data, vmodels) {
     var text = data.value.trim(),
@@ -3225,8 +3225,8 @@ bindingHandlers.attr = function(data, vmodels) {
         var elem = data.element
         data.includeRendered = getBindingCallback(elem, "data-include-rendered", vmodels)
         data.includeLoaded = getBindingCallback(elem, "data-include-loaded", vmodels)
-        var outer = data.includeReplace = !!avalon(elem).data("includeReplace")
-        if (avalon(elem).data("includeCache")) {
+        var outer = data.includeReplace = !!smcore(elem).data("includeReplace")
+        if (smcore(elem).data("includeCache")) {
             data.templateCache = {}
         }
         data.startInclude = DOC.createComment("vm-include")
@@ -3248,7 +3248,7 @@ bindingExecutors.attr = function(val, elem, data) {
     var method = data.type,
         attrName = data.param
     if (method === "css") {
-        avalon(elem).css(attrName, val)
+        smcore(elem).css(attrName, val)
     } else if (method === "attr") {
         // vm-attr-class="xxx" vm.xxx="aaa bbb ccc"将元素的className设置为aaa bbb ccc
         // vm-attr-class="xxx" vm.xxx=false  清空元素的所有类名
@@ -3313,14 +3313,14 @@ bindingExecutors.attr = function(val, elem, data) {
                 }
             }
             var dom = getTemplateNodes(data, val, text)
-            var nodes = avalon.slice(dom.childNodes)
+            var nodes = smcore.slice(dom.childNodes)
             target.insertBefore(dom, data.endInclude)
             scanNodeArray(nodes, vmodels)
         }
 
         if (data.param === "src") {
             if (typeof cacheTmpls[val] === "string") {
-                avalon.nextTick(function() {
+                smcore.nextTick(function() {
                     scanTemplate(cacheTmpls[val])
                 })
             } else if (Array.isArray(cacheTmpls[val])) { //#805 防止在循环绑定中发出许多相同的请求
@@ -3368,7 +3368,7 @@ bindingExecutors.attr = function(val, elem, data) {
                         }
                     }
                 }
-                avalon.nextTick(function() {
+                smcore.nextTick(function() {
                     scanTemplate(el.fixIE78 || el.value || el.innerText || el.innerHTML)
                 })
             }
@@ -3397,7 +3397,7 @@ function getTemplateNodes(data, id, text) {
         }
         return dom
     }
-    return avalon.parseHTML(text)
+    return smcore.parseHTML(text)
 }
 
 //这几个指令都可以使用插值表达式，如vm-src="aaa/{{b}}/{{c}}.html"
@@ -3444,7 +3444,7 @@ bindingHandlers["class"] = function(data, vmodels) {
 }
 
 bindingExecutors["class"] = function(val, elem, data) {
-    var $elem = avalon(elem),
+    var $elem = smcore(elem),
         method = data.type
     if (method === "class" && data.oldStyle) { //如果是旧风格
         $elem.toggleClass(data.oldStyle, !!val)
@@ -3541,7 +3541,7 @@ var duplexBinding = bindingHandlers.duplex = function(data, vmodels) {
                 if (casting[name]) {
                     hasCast = true
                 }
-                avalon.Array.ensure(params, name)
+                smcore.Array.ensure(params, name)
             })
             if (!hasCast) {
                 params.push("string")
@@ -3555,14 +3555,14 @@ var duplexBinding = bindingHandlers.duplex = function(data, vmodels) {
                 }
                 var old = data.rollback
                 data.rollback = function() {
-                    elem.avalonSetter = null
-                    avalon.unbind(elem, type, callback)
+                    elem.smcoreSetter = null
+                    smcore.unbind(elem, type, callback)
                     old && old()
                 }
             }
-            for (var i in avalon.vmodels) {
-                var v = avalon.vmodels[i]
-                v.$fire("avalon-vm-duplex-init", data)
+            for (var i in smcore.vmodels) {
+                var v = smcore.vmodels[i]
+                v.$fire("smcore-vm-duplex-init", data)
             }
             var cpipe = data.pipe || (data.pipe = pipe)
             cpipe(null, data, "init")
@@ -3574,7 +3574,7 @@ var duplexBinding = bindingHandlers.duplex = function(data, vmodels) {
 function fixNull(val) {
     return val == null ? "" : val
 }
-avalon.duplexHooks = {
+smcore.duplexHooks = {
     checked: {
         get: function(val, data) {
             return !data.element.oldValue
@@ -3614,7 +3614,7 @@ avalon.duplexHooks = {
 
 function pipe(val, data, action, e) {
     data.param.replace(/\w+/g, function(name) {
-        var hook = avalon.duplexHooks[name]
+        var hook = smcore.duplexHooks[name]
         if (hook && typeof hook[action] === "function") {
             val = hook[action](val, data)
         }
@@ -3624,7 +3624,7 @@ function pipe(val, data, action, e) {
 
 var TimerID, ribbon = []
 
-avalon.tick = function(fn) {
+smcore.tick = function(fn) {
     if (ribbon.push(fn) === 1) {
         TimerID = setInterval(ticker, 60)
     }
@@ -3651,12 +3651,12 @@ new function() { // jshint ignore:line
         var bproto = HTMLTextAreaElement.prototype
 
         function newSetter(value) { // jshint ignore:line
-            if (avalon.contains(root, this)) {
+            if (smcore.contains(root, this)) {
                 setters[this.tagName].call(this, value)
                 if (!rmsinput.test(this.type))
                     return
-                if (!this.msFocus && this.avalonSetter) {
-                    this.avalonSetter()
+                if (!this.msFocus && this.smcoreSetter) {
+                    this.smcoreSetter()
                 }
             }
         }
@@ -3674,14 +3674,14 @@ new function() { // jshint ignore:line
         //在chrome 43中 vm-duplex终于不需要使用定时器实现双向绑定了
         // http://updates.html5rocks.com/2015/04/DOM-attributes-now-on-the-prototype
         // https://docs.google.com/document/d/1jwA8mtClwxI-QJuHT7872Z0pxpZz8PBkf2bGAbsUtqs/edit?pli=1
-        watchValueInTimer = avalon.tick
+        watchValueInTimer = smcore.tick
     }
 } // jshint ignore:line
 if (IEVersion) {
-    avalon.bind(DOC, "selectionchange", function(e) {
+    smcore.bind(DOC, "selectionchange", function(e) {
         var el = DOC.activeElement
-        if (el && typeof el.avalonSetter === "function") {
-            el.avalonSetter()
+        if (el && typeof el.smcoreSetter === "function") {
+            el.smcoreSetter()
         }
     })
 }
@@ -3690,7 +3690,7 @@ if (IEVersion) {
 duplexBinding.INPUT = function(element, evaluator, data) {
     var $type = element.type,
         bound = data.bound,
-        $elem = avalon(element),
+        $elem = smcore(element),
         composing = false
 
     function callback(value) {
@@ -3714,7 +3714,7 @@ duplexBinding.INPUT = function(element, evaluator, data) {
                 evaluator(lastValue)
                 callback.call(element, lastValue)
                 if ($elem.data("duplex-focus")) {
-                    avalon.nextTick(function() {
+                    smcore.nextTick(function() {
                         element.focus()
                     })
                 }
@@ -3762,7 +3762,7 @@ duplexBinding.INPUT = function(element, evaluator, data) {
                     log("vm-duplex应用于checkbox上要对应一个数组")
                     array = [array]
                 }
-                avalon.Array[method](array, data.pipe(element.value, data, "get"))
+                smcore.Array[method](array, data.pipe(element.value, data, "get"))
                 callback.call(element, array)
             }
         }
@@ -3832,7 +3832,7 @@ duplexBinding.INPUT = function(element, evaluator, data) {
             })
         }
 
-        element.avalonSetter = updateVModel //#765
+        element.smcoreSetter = updateVModel //#765
     }
 
     element.oldValue = element.value
@@ -3841,7 +3841,7 @@ duplexBinding.INPUT = function(element, evaluator, data) {
 }
 duplexBinding.TEXTAREA = duplexBinding.INPUT
 duplexBinding.SELECT = function(element, evaluator, data) {
-    var $elem = avalon(element)
+    var $elem = smcore(element)
 
     function updateVModel() {
         if ($elem.data("duplexObserve") !== false) {
@@ -3900,7 +3900,7 @@ bindingExecutors.html = function(val, elem, data) {
             fragment.appendChild(nodes[0])
         }
     } else {
-        fragment = avalon.parseHTML(val)
+        fragment = smcore.parseHTML(val)
     }
     //插入占位符, 如果是过滤器,需要有节制地移除指定的数量,如果是html指令,直接清空
     var comment = DOC.createComment("vm-html")
@@ -3917,12 +3917,12 @@ bindingExecutors.html = function(val, elem, data) {
         parent.removeChild(elem)
         data.element = comment //防止被CG
     } else {
-        avalon.clearHTML(parent).appendChild(comment)
+        smcore.clearHTML(parent).appendChild(comment)
     }
     if (isHtmlFilter) {
         data.group = fragment.childNodes.length || 1
     }
-    nodes = avalon.slice(fragment.childNodes)
+    nodes = smcore.slice(fragment.childNodes)
     if (nodes[0]) {
         if (comment.parentNode)
             comment.parentNode.replaceChild(fragment, comment)
@@ -4008,13 +4008,13 @@ bindingExecutors.on = function(callback, elem, data) {
     } else if (typeof data.specialBind === "function") {
         data.specialBind(elem, callback)
     } else {
-        var removeFn = avalon.bind(elem, eventType, callback)
+        var removeFn = smcore.bind(elem, eventType, callback)
     }
     data.rollback = function() {
         if (typeof data.specialUnbind === "function") {
             data.specialUnbind()
         } else {
-            avalon.unbind(elem, eventType, removeFn)
+            smcore.unbind(elem, eventType, removeFn)
         }
     }
 }
@@ -4027,10 +4027,10 @@ bindingHandlers.repeat = function(data, vmodels) {
     var freturn = false
     try {
         var $repeat = data.$repeat = data.evaluator.apply(0, data.args || [])
-        var xtype = avalon.type($repeat)
+        var xtype = smcore.type($repeat)
         if (xtype !== "object" && xtype !== "array") {
             freturn = true
-            avalon.log("warning:" + data.value + "只能是对象或数组")
+            smcore.log("warning:" + data.value + "只能是对象或数组")
         }
     } catch (e) {
         freturn = true
@@ -4061,12 +4061,12 @@ bindingHandlers.repeat = function(data, vmodels) {
 
     if (type === "each" || type === "with") {
         data.template = elem.innerHTML.trim()
-        avalon.clearHTML(elem).appendChild(comment)
+        smcore.clearHTML(elem).appendChild(comment)
     } else {
         data.template = elem.outerHTML.trim()
         elem.parentNode.replaceChild(comment, elem)
     }
-    data.template = avalon.parseHTML(data.template)
+    data.template = smcore.parseHTML(data.template)
     data.rollback = function() {
         var elem = data.element
         if (!elem)
@@ -4099,7 +4099,7 @@ bindingHandlers.repeat = function(data, vmodels) {
     }
     var $events = $repeat.$events
     var $list = ($events || {})[subscribers]
-    if ($list && avalon.Array.ensure($list, data)) {
+    if ($list && smcore.Array.ensure($list, data)) {
         addSubscribers(data, $list)
     }
     if (xtype === "object") {
@@ -4225,7 +4225,7 @@ bindingExecutors.repeat = function(method, pos, el) {
         checkScan(parent, function() {
             callback.apply(parent, args)
             if (parent.oldValue && parent.tagName === "SELECT") { //fix #503
-                avalon(parent).val(parent.oldValue.split(","))
+                smcore(parent).val(parent.oldValue.split(","))
             }
         }, NaN)
     }
@@ -4237,7 +4237,7 @@ bindingExecutors.repeat = function(method, pos, el) {
 
 function shimController(data, transation, proxy, fragments) {
     var content = data.template.cloneNode(true)
-    var nodes = avalon.slice(content.childNodes)
+    var nodes = smcore.slice(content.childNodes)
     if (proxy.$stamp) {
         content.insertBefore(proxy.$stamp, content.firstChild)
     }
@@ -4281,7 +4281,7 @@ function eachProxyFactory(name) {
         $index: 0,
         $first: false,
         $last: false,
-        $remove: avalon.noop
+        $remove: smcore.noop
     }
     source[name] = {
         get: function() {
@@ -4368,7 +4368,7 @@ function withProxyAgent(key, data) {
 
 function recycleProxies(proxies, type) {
     var proxyPool = type === "each" ? eachProxyPool : withProxyPool
-    avalon.each(proxies, function(key, proxy) {
+    smcore.each(proxies, function(key, proxy) {
         if (proxy.$events) {
             for (var i in proxy.$events) {
                 if (Array.isArray(proxy.$events[i])) {
@@ -4431,10 +4431,10 @@ function parseDisplay(nodeName, val) {
     return parseDisplay[key]
 }
 
-avalon.parseDisplay = parseDisplay
+smcore.parseDisplay = parseDisplay
 
 bindingHandlers.visible = function(data, vmodels) {
-    var elem = avalon(data.element)
+    var elem = smcore(data.element)
     var display = elem.css("display")
     if (display === "none") {
         var style = elem[0].style
@@ -4465,7 +4465,7 @@ bindingHandlers.widget = function(data, vmodels) {
         id = generateID(widget)
     }
     var optName = args[2] || widget//没有定义，取组件名
-    var constructor = avalon.ui[widget]
+    var constructor = smcore.ui[widget]
     if (typeof constructor === "function") { //vm-widget="tabs,tabsAAA,optname"
         vmodels = elem.vmodels || vmodels
         for (var i = 0, v; v = vmodels[i++]; ) {
@@ -4482,20 +4482,20 @@ bindingHandlers.widget = function(data, vmodels) {
             }
         }
         //抽取data-tooltip-text、data-tooltip-attr属性，组成一个配置对象
-        var widgetData = avalon.getWidgetData(elem, widget)
+        var widgetData = smcore.getWidgetData(elem, widget)
         data.value = [widget, id, optName].join(",")
         data[widget + "Id"] = id
         data.evaluator = noop
         elem.msData["vm-widget-id"] = id
-        var options = data[widget + "Options"] = avalon.mix({}, constructor.defaults, vmOptions || {}, widgetData)
+        var options = data[widget + "Options"] = smcore.mix({}, constructor.defaults, vmOptions || {}, widgetData)
         elem.removeAttribute("vm-widget")
         var vmodel = constructor(elem, data, vmodels) || {} //防止组件不返回VM
         if (vmodel.$id) {
-            avalon.vmodels[id] = vmodel
+            smcore.vmodels[id] = vmodel
             createSignalTower(elem, vmodel)
             if (vmodel.hasOwnProperty("$init")) {
                 vmodel.$init(function() {
-                    avalon.scan(elem, [vmodel].concat(vmodels))
+                    smcore.scan(elem, [vmodel].concat(vmodels))
                     if (typeof options.onInit === "function") {
                         options.onInit.call(elem, vmodel, options, vmodels)
                     }
@@ -4508,7 +4508,7 @@ bindingHandlers.widget = function(data, vmodels) {
                 } catch (e) {
                 }
                 elem.msData = {}
-                delete avalon.vmodels[vmodel.$id]
+                delete smcore.vmodels[vmodel.$id]
             }
             addSubscribers(data, widgetList)
             if (window.chrome) {
@@ -4517,7 +4517,7 @@ bindingHandlers.widget = function(data, vmodels) {
                 })
             }
         } else {
-            avalon.scan(elem, vmodels)
+            smcore.scan(elem, vmodels)
         }
     } else if (vmodels.length) { //如果该组件还没有加载，那么保存当前的vmodels
         elem.vmodels = vmodels
@@ -4573,7 +4573,7 @@ function numberFormat(number, decimals, point, thousands) {
 }
 
 
-var filters = avalon.filters = {
+var filters = smcore.filters = {
     uppercase: function(str) {
         return str.toUpperCase()
     },
@@ -4589,7 +4589,7 @@ var filters = avalon.filters = {
     $filter: function(val) {
         for (var i = 1, n = arguments.length; i < n; i++) {
             var array = arguments[i]
-            var fn = avalon.filters[array.shift()]
+            var fn = smcore.filters[array.shift()]
             if (typeof fn === "function") {
                 var arr = [val].concat(array)
                 val = fn.apply(null, arr)
@@ -4805,7 +4805,7 @@ new function() {// jshint ignore:line
         if (typeof date === "number") {
             date = new Date(date)
         }
-        if (avalon.type(date) !== "date") {
+        if (smcore.type(date) !== "date") {
             return
         }
         while (format) {
@@ -4877,7 +4877,7 @@ new function() {// jshint ignore:line
  *                     END                                  *
  **********************************************************************/
 new function() {
-    avalon.config({
+    smcore.config({
         loader: false
     })
     var fns = [], fn, loaded
@@ -4887,8 +4887,8 @@ new function() {
             f()
     }
     if (W3C) {
-        avalon.bind(DOC, "DOMContentLoaded", fn = function() {
-            avalon.unbind(DOC, "DOMContentLoaded", fn)
+        smcore.bind(DOC, "DOMContentLoaded", fn = function() {
+            smcore.unbind(DOC, "DOMContentLoaded", fn)
             flush()
         })
     } else {
@@ -4899,45 +4899,45 @@ new function() {
             }
         }, 50)
     }
-    avalon.ready = function(fn) {
-        loaded ? fn(avalon) : fns.push(fn)
+    smcore.ready = function(fn) {
+        loaded ? fn(smcore) : fns.push(fn)
     }
-    avalon.ready(function() {
-        avalon.scan(DOC.body)
+    smcore.ready(function() {
+        smcore.scan(DOC.body)
     })
 }
 
 
-// Register as a named AMD module, since avalon can be concatenated with other
+// Register as a named AMD module, since smcore can be concatenated with other
 // files that may use define, but not via a proper concatenation script that
 // understands anonymous AMD modules. A named AMD is safest and most robust
-// way to register. Lowercase avalon is used because AMD module names are
-// derived from file names, and Avalon is normally delivered in a lowercase
+// way to register. Lowercase smcore is used because AMD module names are
+// derived from file names, and smcore is normally delivered in a lowercase
 // file name. Do this after creating the global so that if an AMD module wants
-// to call noConflict to hide this version of avalon, it will work.
+// to call noConflict to hide this version of smcore, it will work.
 
-// Note that for maximum portability, libraries that are not avalon should
+// Note that for maximum portability, libraries that are not smcore should
 // declare themselves as anonymous modules, and avoid setting a global if an
-// AMD loader is present. avalon is a special case. For more information, see
+// AMD loader is present. smcore is a special case. For more information, see
 // https://github.com/jrburke/requirejs/wiki/Updating-existing-libraries#wiki-anon
     if (typeof define === "function" && define.amd) {
-        define("avalon", [], function() {
-            return avalon
+        define("smcore", [], function() {
+            return smcore
         })
     }
-// Map over avalon in case of overwrite
-    var _avalon = window.avalon
-    avalon.noConflict = function(deep) {
-        if (deep && window.avalon === avalon) {
-            window.avalon = _avalon
+// Map over smcore in case of overwrite
+    var _smcore = window.smcore
+    smcore.noConflict = function(deep) {
+        if (deep && window.smcore === smcore) {
+            window.smcore = _smcore
         }
-        return avalon
+        return smcore
     }
-// Expose avalon identifiers, even in AMD
+// Expose smcore identifiers, even in AMD
 // and CommonJS for browser emulators
     if (noGlobal === void 0) {
-        window.avalon = avalon
+        window.smcore = smcore
     }
-    return avalon
+    return smcore
 
 }));

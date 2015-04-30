@@ -1,3 +1,4 @@
+;(function() {
 /**
  * The base Class implementation.
  * @module _utils/class
@@ -193,3 +194,4 @@ mods_ibar_tplinit = function (Class, Tpl) {
     }
   });
 }(base_class, tpl_ibar);
+}());

@@ -1,3 +1,4 @@
+;(function() {
 /**
  * The base Class implementation.
  * @module _utils/class
@@ -396,3 +397,4 @@ mods_ibar_main = function (smcore, ibarTpl, getData) {
   });
   return _VM_;
 }(smcore, mods_ibar_tplinit, data_ibar);
+}());

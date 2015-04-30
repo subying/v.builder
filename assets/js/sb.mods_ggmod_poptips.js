@@ -1,3 +1,4 @@
+;(function() {
 /**
  * The base Class implementation.
  * @module _utils/class
@@ -161,3 +162,4 @@ mods_ggmod_poptips = function (Class, Tpl) {
     }
   });
 }(base_class, tpl_ggmod);
+}());

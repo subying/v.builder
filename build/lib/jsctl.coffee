@@ -15,10 +15,11 @@ amdclean = require 'amdclean'
 gulp    = require 'gulp'
 revall  = require 'gulp-rev-all'
 uglify  = require 'uglify-js'
-_uglify = require 'gulp-uglify'
-header  = require 'gulp-header'
-pkg     = require '../package.json'
-info    = '/* <%= pkg.name %>@v<%= pkg.version %>, @description <%= pkg.description %>, @author <%= pkg.author.name %>, @blog <%= pkg.author.url %> */\n'
+# _uglify = require 'gulp-uglify'
+# header  = require 'gulp-header'
+# pkg     = require '../package.json'
+# info    = '/* <%= pkg.name %>@v<%= pkg.version %>, @description <%= pkg.description %>, @author <%= pkg.author.name %>, @blog <%= pkg.author.url %> */\n'
+GLOBALVAR = "var STATICPATH='#{config.staticRoot}',VARS=window['VARS']={},_VM_=window['_VM_']={};\n"
 rjs     = require 'gulp-requirejs'
 plumber = require 'gulp-plumber'
 gutil   = require 'gulp-util'
@@ -36,7 +37,6 @@ tryEval = (str)->
     try 
         json = eval('(' + str + ')')
     catch err
-
 
 jsHash = {}
 
@@ -58,17 +58,16 @@ _buildJs = (source,outName,cb)->
     _jsHash = {}
     outPath = path.join rootPath, config.jsDistPath
     not fs.existsSync(outPath) and butil.mkdirsSync(outPath)
-
-    content = source
-    # console.log content
     _content = amdclean.clean({
-            code:content
-            wrap:null
+            code:source
+            wrap:
+                start: if outName is config.coreJsName then GLOBALVAR else ';(function() {\n'
+                end: if outName is config.coreJsName then '' else '\n}());'
         })
     # console.log _content
     # 生成combo后的源码
-    _oldPath = path.join outPath, outName + '.js'
     
+    _oldPath = path.join outPath, outName + '.js'
     fs.writeFileSync _oldPath, _content, 'utf8'
 
     # 生成带Hash的生产码
@@ -86,7 +85,7 @@ _buildJs = (source,outName,cb)->
 ### 过滤依赖表里的关键词，排除空依赖 ### 
 filterDepMap = (depMap)->
     depMap = depMap.filter (dep)->
-        ["require", "exports", "module","jquery","smcore","underscore","cookie"].indexOf(dep) == -1
+        ["require", "exports", "module",""].indexOf(dep) == -1
     return depMap.map (dep) -> 
                 return dep.replace(/\.js$/,'')
 

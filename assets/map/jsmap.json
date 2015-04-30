@@ -48,7 +48,7 @@
     "distname": "_tpl/ggmod.js"
   },
   "_tpl/header.js": {
-    "hash": "7ad3e8c7628260ca2abf10d3247c47d5",
+    "hash": "c72e25a058a2165b26a549e752ec70ec",
     "distname": "_tpl/header.js"
   },
   "_tpl/ibar.js": {
@@ -60,11 +60,11 @@
     "distname": "_utils/doajax.js"
   },
   "config.dev.js": {
-    "hash": "71afc54dc00db78fa7c54f86a7f73440",
+    "hash": "18cc8f584948404c3bbf9784f06a792c",
     "distname": "config.dev.js"
   },
   "config.js": {
-    "hash": "557092d87f85d8ce233c8cd07867625f",
+    "hash": "5126f18adcb3204af8ff64d642c7701e",
     "distname": "config.js"
   },
   "mods/common/header.js": {
@@ -108,7 +108,7 @@
     "distname": "vendor/require/require.js"
   },
   "vendor/smcore/smcore.js": {
-    "hash": "7ad323896eb14321bce6714ee8b0b7c7",
+    "hash": "dc4fd556a3f2adf885801323cc612424",
     "distname": "vendor/smcore/smcore.js"
   },
   "vendor/underscore/underscore.js": {

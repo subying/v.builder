@@ -1,5 +1,5 @@
 require.config({
-  "baseUrl": "http://pcs.shenba.com/_src/_js",
+  "baseUrl": "http://static.local/_src/_js",
   "paths": {
     "cookie": "vendor/cookie/jquery.cookie",
     "jquery": "vendor/jquery/jquery",
