@@ -3,7 +3,7 @@
 /*
  * ajax接口封装
  */
-var utils_doajax, data_ibar, base_class, tpl_header, tpl_ggmod, mods_ggmod_poptips, mods_common_header, tpl_ibar, mods_ibar_tplinit, mods_ibar_main, mods_index_vmctrl;
+var utils_doajax, data_ibar, base_class, tpl_header, mods_common_header, tpl_ibar, mods_ibar_tplinit, mods_ibar_main, mods_index_vmctrl;
 utils_doajax = function () {
   var exports;
   exports = {};
@@ -215,24 +215,13 @@ base_class = function () {
   return Class;
 }();
 tpl_header = {
-  '_cartlist': '<script id="tpl_header_cartlist" type="smcore"><i class="cart-icons"></i><div class="cart_content_null" vm-if="cartInfo.quantity == 0"> \u8D2D\u7269\u8F66\u4E2D\u8FD8\u6CA1\u6709\u5546\u54C1\uFF0C <br>\u5FEB\u53BB\u6311\u9009\u5FC3\u7231\u7684\u5546\u54C1\u5427\uFF01</div><div class="cart_content_all" vm-if="cartInfo.quantity > 0"><div class="cart_left_time"><span class="cart_timer">16\u520627.6</span>\u540E\u8D2D\u7269\u8F66\u5C06\u88AB\u6E05\u7A7A,\u8BF7\u53CA\u65F6\u7ED3\u7B97</div><div class="cart_content_center"><div class="cart_con_over cart_con_single" vm-repeat="cartInfo.product.items"><div class="single_pic"><a vm-attr-alt="el.short_name" target="_blank" vm-href="el.url + \'?from=home_cart_float\'"><img vm-src="http://static.local/assets/img/el.image_60?=t14307141"></a></div><div class="single_info"><a class="name" vm-attr-alt="el.short_name" target="_blank" vm-href="el.url + \'?from=home_cart_float\'">{{el.short_name}}</a><span class="price">\uFFE5{{el.item_price}}</span><span class="price_plus"> x </span><span class="price_num">{{el.quantity}}</span></div></div></div><div class="con_all"><div class="price_whole"><span>\u5171<span class="num_all">{{cartInfo.quantity}}</span>\u4EF6\u5546\u54C1</span></div><div><span class="price_gongji">\u5171\u8BA1<em>\uFFE5</em><span class="total_price">{{cartInfo.total_amount}}</span></span><a rel="nofollow" class="cart_btn" href="http://cart.jumei.com/i/cart/show/?from=header_cart">\u53BB\u8D2D\u7269\u8F66\u7ED3\u7B97</a></div></div></div></script>',
+  '_cartlist': '<script id="tpl_header_cartlist" type="smcore"><i class="cart-icons"></i><div class="cart_content_null" vm-if="cartInfo.quantity == 0"> \u8D2D\u7269\u8F66\u4E2D\u8FD8\u6CA1\u6709\u5546\u54C1\uFF0C <br>\u5FEB\u53BB\u6311\u9009\u5FC3\u7231\u7684\u5546\u54C1\u5427\uFF01</div><div class="cart_content_all" vm-if="cartInfo.quantity > 0"><div class="cart_left_time"><span class="cart_timer">16\u520627.6</span>\u540E\u8D2D\u7269\u8F66\u5C06\u88AB\u6E05\u7A7A,\u8BF7\u53CA\u65F6\u7ED3\u7B97</div><div class="cart_content_center"><div class="cart_con_over cart_con_single" vm-repeat="cartInfo.product.items"><div class="single_pic"><a vm-attr-alt="el.short_name" target="_blank" vm-href="el.url + \'?from=home_cart_float\'"><img vm-src="http://static.local/assets/img/el.image_60?=t14307224"></a></div><div class="single_info"><a class="name" vm-attr-alt="el.short_name" target="_blank" vm-href="el.url + \'?from=home_cart_float\'">{{el.short_name}}</a><span class="price">\uFFE5{{el.item_price}}</span><span class="price_plus"> x </span><span class="price_num">{{el.quantity}}</span></div></div></div><div class="con_all"><div class="price_whole"><span>\u5171<span class="num_all">{{cartInfo.quantity}}</span>\u4EF6\u5546\u54C1</span></div><div><span class="price_gongji">\u5171\u8BA1<em>\uFFE5</em><span class="total_price">{{cartInfo.total_amount}}</span></span><a rel="nofollow" class="cart_btn" href="http://cart.jumei.com/i/cart/show/?from=header_cart">\u53BB\u8D2D\u7269\u8F66\u7ED3\u7B97</a></div></div></div></script>',
   'cartbtn': '<div class="cart_box" id="cart_box" vm-class="car-current:isOn"><a rel="nofollow" href="http://cart.jumei.com/i/cart/show?from=header_cart" class="cart_link" id="cart" vm-mouseenter="movein" vm-mouseleave="moveout"><img width="28" height="28" class="cart_gif" src="http://p0.jmstatic.com/assets/cart.gif"><span class="text">\u53BB\u8D2D\u7269\u8F66\u7ED3\u7B97</span><span class="num" vm-if="cartInfo.quantity > 0">{{cartInfo.quantity}}</span><s class="icon_arrow_right"></s></a><div id="cart_content" class="cart_content" vm-include="tpl_cart" data-include-rendered="render" vm-mouseenter="movein" vm-mouseleave="moveout"></div></div>',
   'userinfo': '<ul id="headerTopLeft" class="header_top_left" vm-if="isLogin"><li class="signin">\u6B22\u8FCE\u60A8\uFF0C<span class="col_jumei"><a target="_blank" href="http://www.jumei.com/i/order/list">JM135ACCE2090</a></span> [ <a href="http://passport.jumei.com/i/account/logout" class="signout">\u9000\u51FA</a> ]</li></ul><ul class="header_top_left" id="headerTopLeft" vm-if="!isLogin"><li>\u6B22\u8FCE\u6765\u5230\u805A\u7F8E\uFF01</li><li><a href="http://www.jumei.com/i/account/login" rel="nofollow">\u8BF7\u767B\u5F55</a></li><li><a href="http://www.jumei.com/i/account/signup" rel="nofollow">\u5FEB\u901F\u6CE8\u518C</a></li></ul>'
 };
-tpl_ggmod = { '_poptips': '<script id="tpl_ggmod_poptips" type="smcore"><div class="envelopeBubble png" style="right: 200px; display: block;"><div class="ebClose"></div><div class="ebtime"><i><span>23</span><strong>\u65F6</strong></i><i><span>25</span><strong>\u5206</strong></i><i style="margin-right:0"><span>59</span><strong>\u79D2</strong></i></div><div class="ebbmont"><a href="http://www.jumei.com/i/membership/show_promocards"><span>\u67E5\u770B\u60A8\u7684</span><span class="price_l">165</span><span>\u5143\u73B0\u91D1\u5238</span></a></div></div></script>' };
-mods_ggmod_poptips = function (Class, Tpl) {
-  return Class.create({
-    initialize: function () {
-      var $body;
-      $body = $('body');
-      this.tpl_poptips = $(Tpl._poptips);
-      return this.tpl_poptips.appendTo($body);
-    }
-  });
-}(base_class, tpl_ggmod);
-mods_common_header = function (smcore, Class, hdTpl, Tips) {
-  var _timer, tplInit;
-  tplInit = Class.create({
+mods_common_header = function (smcore, Class, hdTpl) {
+  var TplInit, _timer;
+  TplInit = Class.create({
     initialize: function () {
       var $body, $cartBtn, $hd_user;
       $body = $('body');
@@ -247,8 +236,7 @@ mods_common_header = function (smcore, Class, hdTpl, Tips) {
     }
   });
   /*模板实例化 */
-  new tplInit();
-  new Tips();
+  new TplInit();
   _timer = null;
   /*header_user的vm模型 */
   _VM_.header_user = smcore.define({
@@ -286,7 +274,7 @@ mods_common_header = function (smcore, Class, hdTpl, Tips) {
     }
   });
   return _VM_;
-}(smcore, base_class, tpl_header, mods_ggmod_poptips);
+}(smcore, base_class, tpl_header);
 tpl_ibar = {
   '_asset': '<script id="tpl_ibar_asset" type="smcore"><a title="\u5173\u95ED" class="ibar_closebtn" href="javascript:;" vm-click="hidePanel(20)"></a><span class="ibar_loading_text">\u6B63\u5728\u4E3A\u60A8\u52AA\u529B\u52A0\u8F7D\u6570\u636E\uFF01</span><div class="ibar-Asset-wrap ibar-moudle-wrap ibar_plugin" id="iBarAsset" style="display: block;"><h2 class="ibar_plugin_title"><span class="ibar_plugin_name">\u6211\u7684\u8D22\u4EA7</span></h2><div class="ibar_plugin_content" style="height: 720px; overflow-y: auto;"><div class="ia-head-list clearfix"><a href="http://www.jumei.com/i/membership/show_promocards?from=ibar_property_xianjinquan" target="_blank" class="ihl-quan fl"><div class="num">0</div><div class="text">\u73B0\u91D1\u5238</div></a><a href="http://www.jumei.com/i/membership/show_red_envelope?from=ibar_property_hongbao" target="_blank" class="ihl-hg fl"><div class="num">0</div><div class="text">\u7EA2\u5305</div></a><a href="http://www.jumei.com/i/account/balance?from=ibar_property_yue" target="_blank" class="ihl-money fl"><div class="num">\xA50</div><div class="text">\u4F59\u989D</div></a></div><div class="ga-expiredsoon"><div class="es-head">\u5373\u5C06\u8FC7\u671F\u73B0\u91D1\u5238</div><div class="ia-none">\u60A8\u8FD8\u6CA1\u6709\u53EF\u7528\u7684\u73B0\u91D1\u5238\u54E6\uFF01</div></div><div class="ga-expiredsoon"><div class="es-head">\u5373\u5C06\u8FC7\u671F\u7EA2\u5305</div><div class="ia-none">\u60A8\u8FD8\u6CA1\u6709\u53EF\u7528\u7684\u7EA2\u5305\u54E6\uFF01</div></div></div></div></script>',
   '_cart': '<script id="tpl_ibar_cart" type="smcore"><a title="\u5173\u95ED" class="ibar_closebtn" href="javascript:;" vm-click="hidePanel(20)"></a><span class="ibar_loading_text">\u6B63\u5728\u4E3A\u60A8\u52AA\u529B\u52A0\u8F7D\u6570\u636E\uFF01</span><div class="ibar_plugin ibar_cart_content" id="iBarCart"><div class="ibar_plugin_title"><span class="ibar_plugin_name">\u8D2D\u7269\u8F66<span class="ibar_cart_timer" style="display: inline;">\u5DF2\u8D85\u65F6\uFF0C\u8BF7\u5C3D\u5FEB\u7ED3\u7B97</span></span></div><div class="ibar_plugin_content ibar_cart_content"><div class="ibar_cart_group_container" style="position: absolute;"><div class="ibar_cart_group ibar_cart_product"><div class="ibar_cart_group_header clearfix"><span class="ibar_cart_group_title">\u805A\u7F8E\u4F18\u54C1</span><span class="ibar_cart_group_shop ibar_text_ellipsis"></span><span class="ibar_cart_group_baoyou ibar_pink">\u65B0\u7528\u6237\u9996\u5355\u6EE1<i>39</i>\u5143\u5305\u90AE</span></div><ul class="ibar_cart_group_items"><li class="ibar_cart_item clearfix" vm-repeat="cartInfo.product.items"><div class="ibar_cart_item_pic"><a target="_blank" vm-attr-title="el.short_name" vm-href="el.url + \'?from=ibar_cart\'"><img vm-attr-alt="el.short_name" vm-src="el.image_100"><span class="ibar_cart_item_tag png" vm-class="ibar_cart_item_tag_active ibar_cart_item_tag_soldout:el.sale_status != \'\'"></span></a></div><div class="ibar_cart_item_desc"><span class="ibar_cart_item_name_wrapper"><span class="ibar_cart_item_global">[\u6781\u901F\u514D\u7A0E\u5E97]</span><a target="_blank" class="ibar_cart_item_name" vm-attr-title="el.short_name" vm-href="el.url + \'?from=ibar_cart\'">{{el.short_name}}</a></span><div class="ibar_cart_item_sku ibar_text_ellipsis"><span>{{el.attribute}}</span></div><div class="ibar_cart_item_price ibar_pink"><span class="unit_price">\uFFE5{{el.item_price}}</span><span class="unit_plus"> x </span><span class="ibar_cart_item_count">{{el.quantity}}</span></div></div></li></ul></div><p class="ibar_cart_loading_text">\u6B63\u5728\u4E3A\u60A8\u52AA\u529B\u5730\u52A0\u8F7D\u6570\u636E\uFF01</p></div><div class="ibar_cart_handler ibar_cart_handler_attached" style="display: block; bottom: 45px"><div class="ibar_cart_handler_header clearfix"><span class="ibar_cart_handler_header_left">\u5171 <span class="ibar_cart_total_quantity ibar_pink">{{cartInfo.quantity}}</span> \u4EF6\u5546\u54C1</span><span class="ibar_cart_total_price ibar_pink">\uFFE5{{cartInfo.total_amount}}</span></div><a target="_blank" href="http://cart.jumei.com/i/cart/show?from=ibar_cart_button" class="ibar_cart_go_btn">\u53BB\u8D2D\u7269\u8F66\u7ED3\u7B97</a></div></div></div></script>',
