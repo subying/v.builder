@@ -4,7 +4,7 @@ define(['_lib/lazyload', './slider', './vmctrl'], function(lazyload, Slider, vmc
   init = function() {
     Slider.init();
     $('img').lazyload({
-      placeholder: STATICPATH + "img/dot.png"
+      placeholder: STATIC_PATH + "img/dot.png"
     });
     return vmctrl.run(function() {
       return $(window).resize(function() {

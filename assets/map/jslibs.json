@@ -1,7 +1,7 @@
 {
   "sb.mods_common_header.js": {
-    "hash": "5ec2ba46bbb303dcc87a5f2258e3b873",
-    "distname": "sb.mods_common_header.5ec2ba46bbb3.js"
+    "hash": "2498209e8e4655de4843c0ebea325e51",
+    "distname": "sb.mods_common_header.2498209e8e46.js"
   },
   "sb.mods_ggmod_poptips.js": {
     "hash": "e26fb1c26afa4cc6a24f82934432b58d",
@@ -16,19 +16,23 @@
     "distname": "sb.mods_ibar_tplinit.d11c57d276df.js"
   },
   "sb.mods_index_main.js": {
-    "hash": "072dc69ac38f47b7a69770800e5bf4e5",
-    "distname": "sb.mods_index_main.072dc69ac38f.js"
+    "hash": "7d1f3ec2ef046012c670150d4c3e726d",
+    "distname": "sb.mods_index_main.7d1f3ec2ef04.js"
   },
   "sb.mods_index_slider.js": {
     "hash": "c55bcb7b9ce2ce6e7bcb62fe06e44c3f",
     "distname": "sb.mods_index_slider.c55bcb7b9ce2.js"
   },
   "sb.mods_index_vmctrl.js": {
-    "hash": "60bf0a5f1c3df16ed67165ac60372b57",
-    "distname": "sb.mods_index_vmctrl.60bf0a5f1c3d.js"
+    "hash": "42cefae55d0e38cf6b052bf99c59c3f4",
+    "distname": "sb.mods_index_vmctrl.42cefae55d0e.js"
+  },
+  "sb.mods_index.js": {
+    "hash": "da4331a8887c959957a249bb7ac29a04",
+    "distname": "sb.mods_index.da4331a8887c.js"
   },
   "sb.corelibs.js": {
-    "hash": "e66203b1e1653de92c1010dbaa808e42",
-    "distname": "sb.corelibs.e66203b1e165.js"
+    "hash": "afb40a9aae85243448d3dfe9aca3076d",
+    "distname": "sb.corelibs.afb40a9aae85.js"
   }
 }

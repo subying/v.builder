@@ -4,7 +4,7 @@ define('mods/index/main',['_lib/lazyload','mods/index/slider','mods/index/vmctrl
   init = function() {
     Slider.init();
     $('img').lazyload({
-      placeholder: STATICPATH + "img/dot.png"
+      placeholder: STATIC_PATH + "img/dot.png"
     });
     return vmctrl.run(function() {
       return $(window).resize(function() {

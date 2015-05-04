@@ -1,7 +1,7 @@
 # 公共头部相关的js
 
-define ['smcore','_base/class','_tpl/header','../ggmod/poptips'],(smcore,Class,hdTpl,Tips)->
-    tplInit = Class.create
+define ['smcore','_base/class','_tpl/header'],(smcore,Class,hdTpl)->
+    TplInit = Class.create
         initialize: ->
             # 定义初始化的容器
             $body = $('body')
@@ -19,8 +19,8 @@ define ['smcore','_base/class','_tpl/header','../ggmod/poptips'],(smcore,Class,h
             @tpl_cartlist.appendTo($body)
 
     ###模板实例化###
-    new tplInit()
-    new Tips()
+    new TplInit()
+
     _timer = null;
     ###header_user的vm模型###
     _VM_.header_user = smcore.define({

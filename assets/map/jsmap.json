@@ -48,7 +48,7 @@
     "distname": "_tpl/ggmod.js"
   },
   "_tpl/header.js": {
-    "hash": "063421ec590a15c4db4494352f1ffdd7",
+    "hash": "c9b7a67b3d0098f6e44077557b65155c",
     "distname": "_tpl/header.js"
   },
   "_tpl/ibar.js": {
@@ -68,7 +68,7 @@
     "distname": "config.js"
   },
   "mods/common/header.js": {
-    "hash": "a0d2cf02e76f1a67075d12918f800d7a",
+    "hash": "a938b43d10ee6edbf1c63c2f1c241131",
     "distname": "mods/common/header.js"
   },
   "mods/ggmod/poptips.js": {
@@ -84,7 +84,7 @@
     "distname": "mods/ibar/tplinit.js"
   },
   "mods/index/main.js": {
-    "hash": "44c9b0d10173ec4f30cd5ca0f1b2450a",
+    "hash": "9c899384a774ff206e1b8d49e7310b15",
     "distname": "mods/index/main.js"
   },
   "mods/index/slider.js": {
@@ -94,6 +94,10 @@
   "mods/index/vmctrl.js": {
     "hash": "0faf486a7a947e7dc4c940e83051d75e",
     "distname": "mods/index/vmctrl.js"
+  },
+  "mods/index.js": {
+    "hash": "8d5fda0e5ece027f430b003d86037aff",
+    "distname": "mods/index.js"
   },
   "vendor/cookie/jquery.cookie.js": {
     "hash": "0f1f6cd6e0036897019b376d38593403",
