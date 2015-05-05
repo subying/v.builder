@@ -48,7 +48,7 @@
     "distname": "_tpl/ggmod.js"
   },
   "_tpl/header.js": {
-    "hash": "7baf6354c0c109a1319769ff2e797c04",
+    "hash": "5b951771dbf744d0643d965f88de6950",
     "distname": "_tpl/header.js"
   },
   "_tpl/ibar.js": {
@@ -96,7 +96,7 @@
     "distname": "mods/index/vmctrl.js"
   },
   "mods/index.js": {
-    "hash": "8d5fda0e5ece027f430b003d86037aff",
+    "hash": "c1dd2325fffaea551a55e7916228ef46",
     "distname": "mods/index.js"
   },
   "vendor/cookie/jquery.cookie.js": {
