@@ -2,14 +2,10 @@
 --------------------------
 by Pang.J.G
 
-
-## 1.前端开发工具的安装和使用说明
-----------------------
-
 本项目基于nodejs环境下的Gulp.JS
 
 
-## 安装
+## 安装 nodeJS 环境
 
 * 前往 [http://nodejs.org/](http://nodejs.org/) 安装nodeJS
    - 注意系统是32位还是64位的，选择对应的版本
@@ -17,18 +13,35 @@ by Pang.J.G
 
 * 安装 `gulp` 全局支持，在终端执行 `npm install -g gulp`
 
-* 安装build的依赖：进入build的目录，执行 `npm install`
 
-* 升级自动化工具：进入build的目录，执行 `npm update`
+## 项目部署和初始化
 
-## 初始化
+本代码库包含了一个静态demo，如在实际开发的项目中部署，例如，你打算将前端静态资源放在 `~/statics/` 文件夹，那么：
 
-在第一次运行时，项目初始化
+### STEP 1
+
+将 `build` 目录下的源码复制到 `statics` 文件夹下；
+
+如果，单独对源码进行代码管理，可以使用以下命令：
+
+```
+git clone https://github.com/lmtdit/bdCore.git build
+```
+
+### STEP 2
+
+进入build的目录，执行 `npm install`，安装依赖的nodejs模块
+
+### STEP 3
+
+模块安装完成后，使用如下命令进行初始化
+
 ```
 gulp init
 ```
+### STEP 4
 
-根据 `config.json` 中的配置，项目初始化后会生成如下的目录结构：
+项目初始化后，会根据 `config.json` 中的配置生成如下的目录结构：
 
 ```js
 ├── build
@@ -56,10 +69,15 @@ gulp init
     ├   └──sp //css中用到的雪碧图的hash格式输出目录，自动构建
     └──map  //保存css、js以及雪碧图的hash的map
 ```
+### STEP 5
+
+
+
 
 ## 开发
 
 默认启动开发模式
+
 ```
 gulp
 ```
@@ -79,8 +97,10 @@ gulp
 1、local开发环境的watch命令：
 ```shell
 gulp
+
 # or
 gulp --e local
+
 # or
 gulp --env local
 #以上三个命令是等效的
@@ -89,8 +109,10 @@ gulp --env local
 2、local开发环境的debug命令：
 ```shell
 gulp --d
+
 # or
 gulp --debug
+
 # or
 gulp --env local --d
 ```
@@ -114,7 +136,8 @@ gulp --env rc
 
 **查看自动化框架支持的项目构建命令**
 ```
-$ gulp -T
+gulp -T
+gulp helper
 ```
 
 本前端开发框架还支持如下命令：
