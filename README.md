@@ -139,12 +139,12 @@ $ gulp -T
 
 ## 规范和建议
 
+### 编程规范
+  - [JavaScript编程规范](./build/javascript.md)
+  - [CSS编程规范](./build/javascript.md)
+
 ### 架构流程和目录规范
 
   ![项目的开发架构流程和规范](./readme.jpg)
   ![HTML和CSS的组织规范和建议](./html_css.jpg)
   ![JavaScript的组织规范和建议](./javascript.jpg)
-
-## 编程规范
-  - [JavaScript编程规范](./build/javascript.md)
-  - [CSS编程规范](./build/javascript.md)
