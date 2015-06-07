@@ -9,14 +9,16 @@
 fs      = require 'fs'
 path    = require 'path'
 _       = require 'lodash'
-config  = require '../config'
+config  = require './config'
 gulp    = require 'gulp'
 gutil   = require 'gulp-util'
 mincss  = require 'gulp-minify-css'
 plumber = require 'gulp-plumber'
 # rename  = require 'gulp-rename'
-
-color = gutil.colors
+butil       = require './butil'
+errrHandler = butil.errrHandler
+md5         = butil.md5
+color       = gutil.colors
 
 # CSS和雪碧图的相关path
 _cssPath        = config.cssOutPath
@@ -24,12 +26,13 @@ _cssDistPath    = config.cssDistPath
 _cssMapName     = config.cssMapName
 _mapPath        = config.mapPath
 _hashLen        = config.hashLength
-_isCombo         = config.isCombo
+_isCombo        = config.isCombo
+
+# 环境判断
+env     = config.env
+isDebug = config.isDebug
 
 
-butil       = require './butil'
-errrHandler = butil.errrHandler
-md5         = butil.md5
 
 ###
 # 替换css的背景图片路径，添加hash戳
@@ -97,7 +100,8 @@ pushCss = (file,done)->
             _distname = obj.name + (if not _isCombo then  '.' + obj.hash.substr(0,_hashLen) else '' ) + obj.ext
             cssMap[obj.base] = 
                 hash : obj.hash
-                distname : _distname
+                distname : _distname.replace(/^\//,'')
+
             _buildCss _distname,_source
         ,->
             _buildCssMap cssMap,->

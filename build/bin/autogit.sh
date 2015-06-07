@@ -1,9 +1,9 @@
 # !/bin/sh
 # !/bin/bash
 
-cd ../../
+
+cd ..
+pwd
 # ls
-git pull
-git add --all
+git add ./_src/*
 git commit -m "This is an Auto-Add's log"
-git push

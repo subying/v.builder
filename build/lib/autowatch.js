@@ -7,7 +7,7 @@
  * @link http://pjg.pw
  * @version $Id$
  */
-var JSHINT, _autowatch, butil, checkFile, color, config, css2dist, cssbd, errrHandler, fs, gutil, htmlCtl, htmlToJs, jsError, jshint, jsto, path, watch, watchChecker,
+var JSHINT, _autowatch, binit, butil, checkFile, color, config, css2dist, cssbd, errrHandler, fs, gutil, htmlCtl, htmlToJs, jsError, jshint, jsto, path, watch, watchChecker,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty,
@@ -17,7 +17,7 @@ fs = require('fs');
 
 path = require('path');
 
-config = require('../config');
+config = require('./config');
 
 watch = require('gulp-watch');
 
@@ -38,6 +38,8 @@ color = gutil.colors;
 butil = require('./butil');
 
 errrHandler = butil.errrHandler;
+
+binit = require('./binit');
 
 jshint = require('jshint');
 
@@ -75,7 +77,7 @@ watchChecker = (function() {
   watchChecker.prototype.getParse = function() {
     var _file, _pathObj, _str;
     _file = this.file;
-    _str = _file.split(config.theme + "/")[1] + "";
+    _str = _file.split(config.srcPath + "/")[1] + "";
     _pathObj = path.parse(_str);
     return _pathObj;
   };
@@ -127,7 +129,9 @@ checkFile = (function(superClass) {
     gutil.log("Conbine", '\'' + color.cyan(_file.split('/js/')[1]) + '\'', "...");
     return jsto(_file, function() {
       gutil.log(color.cyan(_file.split('/js/')[1]), "Conbined!!!");
-      return cb();
+      return binit.jsonToDist(function() {
+        return cb();
+      });
     });
   };
 
@@ -151,7 +155,7 @@ checkFile = (function(superClass) {
       return false;
     }
     gutil.log("Injecting HTML source files relative to HTML Template.");
-    return htmlCtl();
+    return htmlCtl(config, function() {});
   };
 
   checkFile.prototype.less = function(cb) {
@@ -164,7 +168,9 @@ checkFile = (function(superClass) {
     return cssbd.less2css(function() {
       gutil.log(color.green("Less compile success!"));
       return css2dist(function() {
-        return cb();
+        return binit.jsonToDist(function() {
+          return cb();
+        });
       });
     });
   };

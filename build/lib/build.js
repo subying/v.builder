@@ -7,13 +7,13 @@
  * @link http://pjg.pw
  * @version $Id$
  */
-var autowatch, binit, butil, color, config, cssToDist, cssbd, flctl, fs, gutil, htmlCtl, htmlToJs, jsCtl, jsToDev, path;
+var _jsCtl, autowatch, binit, butil, color, config, cssToDist, cssbd, env, flctl, fs, gutil, htmlCtl, htmlToJs, isDebug, jsCtl, jsToDev, path;
 
 fs = require('fs');
 
 path = require('path');
 
-config = require('../config');
+config = require('./config');
 
 gutil = require('gulp-util');
 
@@ -41,6 +41,10 @@ htmlToJs = require('./html2js');
 htmlCtl = require('./htmlctl');
 
 autowatch = require('./autowatch');
+
+env = config.env;
+
+isDebug = config.isDebug;
 
 
 /*
@@ -97,7 +101,6 @@ exports.files = {
   delDistFiles: (function(_this) {
     return function() {
       exports.files.delDistCss();
-      exports.files.delDistSpImg();
       return exports.files.delDistJs();
     };
   })(this)
@@ -197,11 +200,66 @@ exports.js2dev = jsToDev;
  * 将debug目录中AMD js包文件push到生产目录
  */
 
-exports.js2dist = new jsCtl.dist().init;
+_jsCtl = new jsCtl.dist();
+
+exports.js2dist = _jsCtl.init;
+
+exports.corejs = _jsCtl.core;
+
+exports.noamd = _jsCtl.noamd;
+
+exports.htmlctl = htmlCtl;
+
+exports.json2dist = binit.jsonToDist;
+
+exports.json2php = require('./json2php');
 
 
 /*
- * all file to dist
+ * Auto watch API
+ */
+
+exports.autowatch = autowatch;
+
+
+/*
+ * build CSS to cache
+ */
+
+exports.less = function(cb) {
+  var _cb;
+  _cb = cb || function() {};
+  return exports.sprite(function() {
+    return exports.less2css(function() {
+      return exports.bgMap(function() {
+        return _cb();
+      });
+    });
+  });
+};
+
+
+/*
+ * build JS to cache
+ */
+
+exports.js = function(cb) {
+  var _cb;
+  _cb = cb || function() {};
+  return exports.jsLibs(function() {
+    return exports.config(function() {
+      return exports.tpl2dev(function() {
+        return exports.js2dev(function() {
+          return _cb();
+        });
+      });
+    });
+  });
+};
+
+
+/*
+ * css and js file to dist
  */
 
 exports.all2dist = function(cb) {
@@ -210,17 +268,27 @@ exports.all2dist = function(cb) {
   return exports.css2dist(function() {
     gutil.log(color.green('CSS pushed!'));
     return exports.js2dist(function() {
-      gutil.log(color.green('JS pushed!'));
-      return _cb();
+      return exports.noamd(function() {
+        gutil.log(color.green('JS pushed!'));
+        return _cb();
+      });
     });
   });
 };
 
-exports.htmlctl = htmlCtl;
-
 
 /*
- * Auto watch API
+ * build html and map
  */
 
-exports.autowatch = autowatch;
+exports.demoAndMap = function(cb) {
+  var _cb;
+  _cb = cb || function() {};
+  return exports.htmlctl(function() {
+    return exports.json2dist(function() {
+      return exports.json2php(function() {
+        return _cb();
+      });
+    });
+  });
+};

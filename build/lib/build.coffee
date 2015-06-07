@@ -8,7 +8,7 @@
 
 fs      = require 'fs'
 path    = require 'path'
-config  = require '../config'
+config  = require './config'
 gutil   = require 'gulp-util'
 color   = gutil.colors
 
@@ -24,6 +24,9 @@ htmlToJs  = require './html2js'
 htmlCtl   = require './htmlctl'
 autowatch = require './autowatch'
 
+# 环境判断
+env     = config.env
+isDebug = config.isDebug
 
 ###
 # ************* 构建任务函数 *************
@@ -38,7 +41,7 @@ exports.init = ->
 ###文件删除操作###
 exports.files = 
     delJson: ->
-        files = ['jslib.paths','sp.map',]
+        files = ['jslib.paths','sp.map']
         for file in files
             json_file = path.join(config.dataPath, file + '.json')
             if fs.existsSync json_file
@@ -62,8 +65,8 @@ exports.files =
         _ctl.delMap()
     delDistFiles: =>
         exports.files.delDistCss()
-        exports.files.delDistSpImg()
         exports.files.delDistJs()
+        # exports.files.delDistSpImg()
         # exports.files.delMap()
 
 ###
@@ -136,27 +139,63 @@ exports.js2dev = jsToDev
 ###
 # 将debug目录中AMD js包文件push到生产目录
 ###
-exports.js2dist = new jsCtl.dist().init
+_jsCtl = new jsCtl.dist()
+exports.js2dist = _jsCtl.init
+exports.corejs = _jsCtl.core
+exports.noamd = _jsCtl.noamd
 
+
+
+# 将静态资源注入到php模板文件中
+exports.htmlctl = htmlCtl
+
+# 把map文件发布到HTML模板的生产目录
+exports.json2dist = binit.jsonToDist
+
+# 生成PHP版本的Map
+exports.json2php = require('./json2php')
 
 ###
-# all file to dist
+# Auto watch API
+###
+exports.autowatch = autowatch
+
+###
+# build CSS to cache
+###
+exports.less = (cb)->
+    _cb = cb or ->
+    exports.sprite ->
+        exports.less2css ->
+            exports.bgMap -> 
+                    _cb()
+
+###
+# build JS to cache
+###
+exports.js = (cb)->
+    _cb = cb or ->
+    exports.jsLibs ->
+        exports.config ->
+            exports.tpl2dev ->
+                exports.js2dev -> 
+                    _cb()
+###
+# css and js file to dist
 ###
 exports.all2dist = (cb)->
     _cb = cb or ->
     exports.css2dist ->
         gutil.log color.green 'CSS pushed!'
         exports.js2dist ->
-            gutil.log color.green 'JS pushed!'
-            # exports.json2php ->
-            #     gutil.log color.green 'phpMap done!!!!!!!!!'
-            _cb()
-
-# 将静态资源注入到php模板文件中
-exports.htmlctl = htmlCtl
-
-
+            exports.noamd ->
+                gutil.log color.green 'JS pushed!'
+                _cb()
 ###
-# Auto watch API
+# build html and map
 ###
-exports.autowatch = autowatch
+exports.demoAndMap = (cb)->
+    _cb = cb or ->         
+    exports.htmlctl ->
+        exports.json2dist ->
+            exports.json2php -> _cb()

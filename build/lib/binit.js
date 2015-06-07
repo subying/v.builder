@@ -24,7 +24,7 @@ rename = require('gulp-rename');
 
 butil = require('./butil');
 
-config = require('../config');
+config = require('./config');
 
 errrHandler = butil.errrHandler;
 
@@ -40,12 +40,12 @@ Imagemin = require('imagemin');
 
 
 /*
- * init dist, cache and watch DIRS
+ * init dist and cache DIRS
  */
 
 exports.dir = function() {
   var _dir, i, init_dir, len, results;
-  init_dir = [config.rootPath, config.lessPath, config.jsSrcPath, config.tplSrcPath, config.htmlTplSrc, config.spriteSrcPath, config.spriteLessOutPath, config.cssDistPath, config.jsDistPath, config.tplDistPath, config.mapPath, config.spriteDistPath, config.cssBgDistPath, config.jsOutPath, config.tplOutPath, config.cssOutPath, config.spriteImgOutPath];
+  init_dir = [config.rootPath, config.lessPath, config.jsSrcPath, config.tplSrcPath, config.htmlTplSrc, config.spriteSrcPath, config.spriteLessOutPath, config.cssDistPath, config.jsDistPath, config.tplDistPath, config.mapPath, config.spriteDistPath, config.cssBgDistPath, config.jsOutPath, config.tplOutPath, config.cssOutPath, config.docOutPath, config.spriteImgOutPath];
   results = [];
   for (i = 0, len = init_dir.length; i < len; i++) {
     _dir = init_dir[i];
@@ -135,7 +135,7 @@ exports.paths = function(ext, cb) {
     _cb = cb || function() {};
   }
   _map = {};
-  _jsPath = path.join(config.rootPath, config.jsSrcPath);
+  _jsPath = path.join(config.rootPath, config.jsOutPath);
   _cssPath = path.join(config.rootPath, config.cssOutPath);
   _path = _ext === '.js' ? _jsPath : _cssPath;
   _mapName = _ext === '.js' ? config.jsMapName : config.cssMapName;
@@ -160,7 +160,7 @@ exports.paths = function(ext, cb) {
         }
         return _map[_basename] = {
           hash: _hash,
-          distname: _name.replace(/\\\\/g, '/').replace(/\\/g, '/')
+          distname: _name.replace(/\\\\/g, '/').replace(/\\/g, '/').replace(/^\//, '')
         };
       }
     });
@@ -197,8 +197,8 @@ exports.libs = function(cb) {
   });
   jsonData = JSON.stringify(namePaths, null, 2);
   !fs.existsSync(config.dataPath) && butil.mkdirsSync(config.dataPath);
-  fs.writeFileSync(path.join(config.dataPath, config.jsLibsMapName), jsonData, 'utf8');
-  gutil.log(color.green(config.jsLibsMapName + " build success"));
+  fs.writeFileSync(path.join(config.dataPath, config.jsDistMapName), jsonData, 'utf8');
+  gutil.log(color.green(config.jsDistMapName + " build success"));
   return _cb();
 };
 
@@ -208,10 +208,10 @@ exports.libs = function(cb) {
  */
 
 exports.cfg = function(cb) {
-  var _cb, configStr, configStr_dev, jsLibPaths, jsPaths, jsSrcPath, key, newPaths, rCfg, rCfg_dev, shimData, val;
+  var _cb, jsLibPaths, jsPaths, jsSrcPath, key, newPaths, rCfg, require_cfg, shimData, val;
   _cb = cb || function() {};
   shimData = JSON.parse(fs.readFileSync(path.join(config.dataPath, 'shim.json'), 'utf8'));
-  jsLibPaths = JSON.parse(fs.readFileSync(path.join(config.dataPath, config.jsLibsMapName), 'utf8'));
+  jsLibPaths = JSON.parse(fs.readFileSync(path.join(config.dataPath, config.jsDistMapName), 'utf8'));
   jsPaths = JSON.parse(fs.readFileSync(path.join(config.dataPath, 'paths.json'), 'utf8'));
   newPaths = {};
   for (key in jsLibPaths) {
@@ -220,21 +220,33 @@ exports.cfg = function(cb) {
       newPaths[key] = val;
     }
   }
-  rCfg_dev = {
-    baseUrl: config.staticPath + 'js',
-    paths: _.extend(newPaths, jsPaths),
-    shim: shimData
-  };
   rCfg = {
-    baseUrl: config.staticPath + '_js',
+    baseUrl: config.staticRoot + '_src/_js',
     paths: _.extend(newPaths, jsPaths),
     shim: shimData
   };
   jsSrcPath = config.jsSrcPath;
-  configStr_dev = "require.config(" + (JSON.stringify(rCfg_dev, null, 2)) + ");\n";
-  configStr = "require.config(" + (JSON.stringify(rCfg, null, 2)) + ");\n";
-  fs.writeFileSync(path.join(jsSrcPath, "config.dev.js"), configStr_dev, 'utf8');
-  fs.writeFileSync(path.join(jsSrcPath, "config.js"), configStr, 'utf8');
-  gutil.log(color.green("config.js build success!"));
+  require_cfg = "require.config(" + (JSON.stringify(rCfg, null, 2)) + ");";
+  fs.writeFileSync(path.join(jsSrcPath, "require_cfg.js"), require_cfg, 'utf8');
+  gutil.log(color.green("config build success!"));
+  return _cb();
+};
+
+exports.jsonToDist = function(cb) {
+  var _cb, _distPath, _outPath, _srcPath;
+  _cb = cb || function() {};
+  _srcPath = config.mapPath;
+  _distPath = config.phpMapPath;
+  _outPath = path.join(config.htmlTplDist, 'map');
+  !fs.existsSync(_outPath) && butil.mkdirsSync(_outPath);
+  fs.readdirSync(_srcPath).forEach(function(file) {
+    var _jsonData, file_name;
+    if (file.indexOf(".json") !== -1) {
+      file_name = file.replace(".json", "");
+      _jsonData = JSON.parse(fs.readFileSync(path.join(_srcPath, file), 'utf8'));
+      return fs.writeFileSync(path.join(_outPath, file), JSON.stringify(_jsonData), 'utf8');
+    }
+  });
+  gutil.log("ALL map pushed!");
   return _cb();
 };

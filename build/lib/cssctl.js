@@ -7,7 +7,7 @@
  * @link http://pjg.pw
  * @version $Id$
  */
-var _, _buildCss, _buildCssMap, _cssDistPath, _cssMapName, _cssPath, _hashLen, _isCombo, _mapPath, _stream, butil, color, config, errrHandler, fs, gulp, gutil, md5, mincss, path, plumber, pushCss;
+var _, _buildCss, _buildCssMap, _cssDistPath, _cssMapName, _cssPath, _hashLen, _isCombo, _mapPath, _stream, butil, color, config, env, errrHandler, fs, gulp, gutil, isDebug, md5, mincss, path, plumber, pushCss;
 
 fs = require('fs');
 
@@ -15,7 +15,7 @@ path = require('path');
 
 _ = require('lodash');
 
-config = require('../config');
+config = require('./config');
 
 gulp = require('gulp');
 
@@ -24,6 +24,12 @@ gutil = require('gulp-util');
 mincss = require('gulp-minify-css');
 
 plumber = require('gulp-plumber');
+
+butil = require('./butil');
+
+errrHandler = butil.errrHandler;
+
+md5 = butil.md5;
 
 color = gutil.colors;
 
@@ -39,11 +45,9 @@ _hashLen = config.hashLength;
 
 _isCombo = config.isCombo;
 
-butil = require('./butil');
+env = config.env;
 
-errrHandler = butil.errrHandler;
-
-md5 = butil.md5;
+isDebug = config.isDebug;
 
 
 /*
@@ -121,7 +125,7 @@ pushCss = function(file, done) {
     _distname = obj.name + (!_isCombo ? '.' + obj.hash.substr(0, _hashLen) : '') + obj.ext;
     cssMap[obj.base] = {
       hash: obj.hash,
-      distname: _distname
+      distname: _distname.replace(/^\//, '')
     };
     return _buildCss(_distname, _source);
   }, function() {

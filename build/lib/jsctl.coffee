@@ -1,5 +1,5 @@
 ###*
-# AMD模块依赖表的构建类
+# js生产文件构建类库
 # @date 2014-12-2 15:10:14
 # @author pjg <iampjg@gmail.com>
 # @link http://pjg.pw
@@ -8,7 +8,7 @@
 
 fs      = require 'fs'
 path    = require 'path'
-config  = require '../config'
+config  = require './config'
 # flctl   = require './flctl'
 _       = require 'lodash'
 amdclean = require 'amdclean'
@@ -17,8 +17,8 @@ revall  = require 'gulp-rev-all'
 uglify  = require 'uglify-js'
 # _uglify = require 'gulp-uglify'
 # header  = require 'gulp-header'
-# pkg     = require '../package.json'
-# info    = '/* <%= pkg.name %>@v<%= pkg.version %>, @description <%= pkg.description %>, @author <%= pkg.author.name %>, @blog <%= pkg.author.url %> */\n'
+pkg     = require '../package.json'
+info    = "/**\n *Uglify by #{pkg.name}@v#{pkg.version}\n *@description:#{pkg.description}\n *@author:Pang.J.G\n *@homepage:#{pkg.author.url}\n */\n"
 rjs     = require 'gulp-requirejs'
 plumber = require 'gulp-plumber'
 gutil   = require 'gulp-util'
@@ -28,7 +28,8 @@ errrHandler = butil.errrHandler
 md5         = butil.md5
 jsDistMapName = config.jsDistMapName
 rootPath    = config.rootPath
-GLOBALVAR = config.GLOBALVAR
+
+# console.log info
 
 ### '[ ]'标志符内的依赖字符串转化为数组 ### 
 tryEval = (str)-> 
@@ -41,14 +42,20 @@ jsHash = {}
 jsImgRegex = /STATIC_PATH\s*\+\s*(('|")[\s\S]*?(.jpg|.png|.gif)('|"))/g
 
 cssBgMap = {}
+_oldMap = {}
+
 try
     cssBgMap = JSON.parse fs.readFileSync(path.join(config.mapPath, config.cssBgMap), 'utf8')
+    _oldMap = JSON.parse fs.readFileSync(path.join(config.mapPath, jsDistMapName), 'utf8')
 catch e
     # ...
 
+# console.log _oldMap
+
 _buildJsDistMap = (map)->
     mapPath = config.mapPath
-    jsonData = JSON.stringify map, null, 2
+    _map = _.assign _oldMap,map
+    jsonData = JSON.stringify _map, null, 2
     not fs.existsSync(mapPath) and butil.mkdirsSync(mapPath)
     fs.writeFileSync path.join(rootPath, mapPath, jsDistMapName), jsonData, 'utf8'
 
@@ -56,7 +63,6 @@ _updateJsDistMap = (newMap)->
     mapPath = config.mapPath
     _newMap = JSON.stringify newMap, null, 2
     not fs.existsSync(mapPath) and butil.mkdirsSync(mapPath)
-    _oldMap = JSON.parse fs.readFileSync(path.join(rootPath, mapPath, jsDistMapName), 'utf8')
     jsonData = _.assign _oldMap,_newMap
     fs.writeFileSync path.join(rootPath, mapPath, jsDistMapName), jsonData, 'utf8' 
 
@@ -74,25 +80,26 @@ _buildJs = (source,outName,cb)->
     _content = amdclean.clean({
             code: _source
             wrap:
-                start: if outName is config.coreJsName then GLOBALVAR else ';(function() {\n'
-                end: if outName is config.coreJsName then '' else '\n}());'
+                # 不包插入全局变量，改由PHP的init_js函数来实现，以避免不同环境的代码冲突
+                start: if outName is config.coreJsName then '' else  ''
+                end: if outName is config.coreJsName then '' else ''
         })
     # console.log _content
     # 生成combo后的源码
     
     _oldPath = path.join outPath, outName + '.js'
-    fs.writeFileSync _oldPath, _content, 'utf8'
-
     # 生成带Hash的生产码
     mangled = uglify.minify _content,{fromString: true}
     _source = mangled.code
+    _source = [info,_source].join(';')
     _hash = md5(_source)
     _distname = outName + '.' + _hash.substring(0,config.hashLength) + '.js'
     _jsHash[outName + ".js"] = 
         hash: _hash
         distname: _distname
-    _devPath = path.join outPath, _distname
-    fs.writeFileSync _devPath, _source, 'utf8'
+    _distPath = path.join outPath, _distname
+    fs.writeFileSync _oldPath, _source, 'utf8'
+    !config.isDebug && fs.writeFileSync _distPath, _source, 'utf8'
     cb(_jsHash)
 
 ### 过滤依赖表里的关键词，排除空依赖 ### 
@@ -252,7 +259,7 @@ class jsToDist extends jsDepBuilder
         gutil.log color.yellow "Combine #{config.coreJsName} module! Waitting..."
         _cb = cb or ->
         _makeDeps = @makeDeps()
-        _depLibs = _makeDeps.depLibs  
+        _depLibs = _makeDeps.depLibs
         # 核心库队列
         @rjsBuilder _depLibs,-> _cb()
 
@@ -300,7 +307,7 @@ class jsToDist extends jsDepBuilder
         _cb = cb or ->
         _srcPath = @srcPath
         _allDeps = @makeDeps().allDeps
-        # console.log _allDeps
+        # console.log _cfg
         _depList = _allDeps.modList
         # 生成依赖
         _num = 0
@@ -325,25 +332,46 @@ class jsToDist extends jsDepBuilder
                     _source = String(_jsData.join(''))
                     _buildJs _source,_outName,(map)->
                         gutil.log "Combine",color.cyan("'#{module}'"),"---> #{_outName}"
-                        _.assign jsHash,map
+                        jsHash = _.assign jsHash,map
                     _num++
                 catch error
                     gutil.log "Error: #{_outName}"
                     gutil.log error
         _cb(_num)
 
-    # build all modules to dist
+    # build modules to dist
     init: (cb)=>
         _cb = cb or ->
         _modulesToDev = @modulesToDev
-        _coreModule = @coreModule
         _modulesToDev (num)->
             gutil.log color.cyan(num),"javascript modules combined!"
-            # build core module
-            _coreModule ->
-                gutil.log '\'' + color.cyan("#{config.coreJsName}") + '\'',"combined!"
-                _buildJsDistMap jsHash
-                _cb()
+            _buildJsDistMap jsHash
+            _cb()
+
+    # build core module to dist
+    core: (cb)=>
+        _cb = cb or ->
+        _coreModule = @coreModule
+        _coreModule ->
+            gutil.log '\'' + color.cyan("#{config.coreJsName}") + '\'',"combined!"
+            _buildJsDistMap jsHash
+            _cb()
+
+    # 处理非AMD模块的js，并生成map
+    noamd: (cb)=>
+        _cb = cb or ->
+        _srcPath = @srcPath
+        fs.readdirSync(_srcPath).forEach (v)->
+            _jsFile = path.join(_srcPath, v)
+            if fs.statSync(_jsFile).isFile() and v.indexOf('.') isnt 0
+                # console.log _jsFile
+                _source = fs.readFileSync(_jsFile, 'utf8')
+                _outName = v.replace('.js','')
+                _buildJs _source,_outName,(map)->
+                    jsHash = _.assign jsHash,map
+                    _buildJsDistMap jsHash
+        _cb()
+
 
 # 外部接口
 exports.bder = jsDepBuilder

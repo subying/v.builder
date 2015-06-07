@@ -7,7 +7,7 @@
 ###
 fs      = require 'fs'
 path    = require 'path'
-config  = require '../config'
+config  = require './config'
 watch   = require 'gulp-watch'
 gutil   = require 'gulp-util'
 cssbd   = require './cssbd'
@@ -17,10 +17,11 @@ htmlCtl   = require './htmlctl'
 jsto    = require './jsto'
 color   = gutil.colors
 
+
 # 错误报警,beep响两声
 butil       = require './butil'
 errrHandler = butil.errrHandler
-
+binit       = require './binit'
 
 # JS语法检测
 jshint  = require 'jshint'
@@ -47,7 +48,7 @@ class watchChecker
     constructor: (@file)->
     getParse: ->
         _file = @file
-        _str =  _file.split("#{config.theme}/")[1] + ""
+        _str =  _file.split("#{config.srcPath}/")[1] + ""
         _pathObj = path.parse(_str)
         return _pathObj
     type: ->
@@ -72,7 +73,7 @@ class checkFile extends watchChecker
         gutil.log "Conbine",'\'' + color.cyan(_file.split('/js/')[1]) + '\'',"..."
         jsto _file,->
             gutil.log color.cyan(_file.split('/js/')[1]),"Conbined!!!"
-            cb()
+            binit.jsonToDist -> cb()
     tpl:(cb)=>
         _type = @type()
         return false if _type isnt 'tpl'
@@ -85,7 +86,7 @@ class checkFile extends watchChecker
         _type = @type()
         return false if _type isnt 'html'
         gutil.log "Injecting HTML source files relative to HTML Template."
-        htmlCtl()
+        htmlCtl config,->
 
     less: (cb)=>
         _type = @type()
@@ -94,7 +95,8 @@ class checkFile extends watchChecker
         cssbd.less2css ->
             gutil.log color.green "Less compile success!"
             css2dist ->
-                cb()
+                binit.jsonToDist ->
+                    cb()
     sprite: (cb)=>
         _type = @type()
         return false if _type isnt 'png'

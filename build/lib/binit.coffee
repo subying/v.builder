@@ -12,18 +12,17 @@ color   = gutil.colors
 imgmin  = require 'gulp-imagemin'
 rename  = require 'gulp-rename'
 butil   = require './butil'
-config  = require '../config'
+config  = require './config'
 errrHandler = butil.errrHandler
 objMixin    = butil.objMixin
 md5         = butil.md5
 hashLength  = config.hashLength
 mapPath     = config.mapPath
 
-
 Imagemin = require('imagemin')
 
 ###
-# init dist, cache and watch DIRS
+# init dist and cache DIRS
 ###
 exports.dir = ->
     init_dir = [
@@ -43,6 +42,7 @@ exports.dir = ->
         config.jsOutPath
         config.tplOutPath
         config.cssOutPath
+        config.docOutPath
         config.spriteImgOutPath
     ]
 
@@ -96,6 +96,7 @@ exports.bgmap = (cb)->
                 _map[_name].hash = _hash
                 _map[_name].distname = _distname.replace(/\\\\/g,'/')
                                                 .replace(/\\/g,'/')
+
                 _imgmin = new Imagemin()
                     .src(sub_Path)
                     .dest(config.imgDistPath)
@@ -126,7 +127,7 @@ exports.paths = (ext,cb)->
         _cb = cb or ->
     
     _map = {}
-    _jsPath = path.join config.rootPath, config.jsSrcPath
+    _jsPath = path.join config.rootPath, config.jsOutPath
     _cssPath = path.join config.rootPath, config.cssOutPath
     _path = if _ext is '.js' then _jsPath else _cssPath
     _mapName = if _ext is '.js' then config.jsMapName else config.cssMapName
@@ -155,6 +156,7 @@ exports.paths = (ext,cb)->
                     hash:_hash
                     distname:_name.replace(/\\\\/g,'/')
                                   .replace(/\\/g,'/')
+                                  .replace(/^\//,'')
 
     makePaths(_path)
     jsonData = JSON.stringify _map, null, 2
@@ -179,8 +181,8 @@ exports.libs = (cb)->
     jsonData = JSON.stringify namePaths, null, 2
     # gutil.log jsonData
     not fs.existsSync(config.dataPath) and butil.mkdirsSync(config.dataPath)
-    fs.writeFileSync path.join(config.dataPath, config.jsLibsMapName), jsonData, 'utf8'
-    gutil.log color.green "#{config.jsLibsMapName} build success"
+    fs.writeFileSync path.join(config.dataPath, config.jsDistMapName), jsonData, 'utf8'
+    gutil.log color.green "#{config.jsDistMapName} build success"
     _cb()
 ###
 # build require.config
@@ -191,7 +193,7 @@ exports.cfg = (cb)->
 
     # 读取json配置
     shimData = JSON.parse fs.readFileSync(path.join(config.dataPath, 'shim.json'), 'utf8')
-    jsLibPaths = JSON.parse fs.readFileSync(path.join(config.dataPath, config.jsLibsMapName), 'utf8')
+    jsLibPaths = JSON.parse fs.readFileSync(path.join(config.dataPath, config.jsDistMapName), 'utf8')
 
     # 预留给第三方的js插件的接口
     jsPaths = JSON.parse fs.readFileSync(path.join(config.dataPath, 'paths.json'), 'utf8') 
@@ -201,29 +203,31 @@ exports.cfg = (cb)->
     for key,val of jsLibPaths
         if key isnt 'require' and key isnt 'almond'
             newPaths[key] = val
-
-    rCfg_dev =
-        baseUrl: config.staticPath + 'js'
-        paths: _.extend newPaths,jsPaths
-        shim: shimData
-
     rCfg =
-        baseUrl: config.staticPath + '_js'
+        baseUrl: config.staticRoot + '_src/_js'
         paths: _.extend newPaths,jsPaths
         shim: shimData
-
+        
     jsSrcPath = config.jsSrcPath
-    
-    configStr_dev = "
-        require.config(#{JSON.stringify(rCfg_dev, null, 2)});\n
-    "
-    configStr = "
-        require.config(#{JSON.stringify(rCfg, null, 2)});\n
-    "
+    require_cfg = "require.config(#{JSON.stringify(rCfg, null, 2)});"
+    fs.writeFileSync path.join(jsSrcPath, "require_cfg.js"), require_cfg, 'utf8'
 
-    fs.writeFileSync path.join(jsSrcPath, "config.dev.js"), configStr_dev, 'utf8'
-    fs.writeFileSync path.join(jsSrcPath, "config.js"), configStr, 'utf8'
+    gutil.log color.green "config build success!"
+    _cb()
 
-    gutil.log color.green "config.js build success!"
+
+# push json map to TPL dist dir
+exports.jsonToDist = (cb)->
+    _cb = cb or ->
+    _srcPath = config.mapPath
+    _distPath = config.phpMapPath
+    _outPath = path.join config.htmlTplDist,'map'
+    not fs.existsSync(_outPath) and butil.mkdirsSync(_outPath)
+    fs.readdirSync(_srcPath).forEach (file)->
+        if file.indexOf(".json") != -1
+            file_name = file.replace(".json","")
+            _jsonData = JSON.parse fs.readFileSync(path.join(_srcPath, file), 'utf8')
+            fs.writeFileSync path.join(_outPath, file), JSON.stringify(_jsonData), 'utf8'
+    gutil.log "ALL map pushed!"
     _cb()
 
