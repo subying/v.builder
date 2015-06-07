@@ -100,9 +100,11 @@ gulp --env local --d
 # 测试环境
 gulp --e test
 gulp --env test
+
 # 预发布环境
 gulp --e rc
 gulp --env rc
+
 # 生产环境
 gulp --e rc
 gulp --env rc
@@ -134,15 +136,7 @@ $ gulp -T
    ├── html //将模块化的静态html文件构建成一个静态可使用的html demo（img scr的引用图片替换为带MD5戳）
    ├── watch //gulp的watch任务，可快速启动开发者模式
    ├── default //默认任务，默认进入开发模式
-   
-
-
-
-
-
-
-   └──
-    release //发布任务
+   └── release //发布任务
 ```
 
 ## 规范和建议
@@ -150,9 +144,9 @@ $ gulp -T
 ### 编程规范
   - [JavaScript编程规范](./build/javascript.md)
   - [CSS编程规范](./build/javascript.md)
-asesys
+
 ### 架构流程和目录规范
 
-  ![项目的开发架构流程和规范](./readme.jpg)
-  ![HTML和CSS的组织规范和建议](./html_css.jpg)
-  ![JavaScript的组织规范和建议](./javascript.jpg)l–l
+  [项目的开发架构流程和规范](./readme.jpg)
+  [HTML和CSS的组织规范和建议](./html_css.jpg)
+  [JavaScript的组织规范和建议](./javascript.jpg)l–l
