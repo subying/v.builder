@@ -19,6 +19,7 @@ define('mods/ibar/main',['smcore','mods/ibar/tplinit','_data/ibar'],function(smc
     isLogin: false,
     iscurrent: false,
     render: function() {
+      console.log(this);
       return this.innerHTML;
     },
     openLogin: function() {

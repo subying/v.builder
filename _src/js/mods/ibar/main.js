@@ -19,6 +19,7 @@ define(['smcore', './tplinit', '_data/ibar'], function(smcore, ibarTpl, getData)
     isLogin: false,
     iscurrent: false,
     render: function() {
+      console.log(this);
       return this.innerHTML;
     },
     openLogin: function() {

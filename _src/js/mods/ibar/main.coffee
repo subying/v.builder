@@ -18,6 +18,7 @@ define ['smcore','./tplinit','_data/ibar'],(smcore,ibarTpl,getData)->
         isLogin:false
         iscurrent:false
         render:->
+            console.log(this)
             this.innerHTML
         openLogin:->
             clearTimeout timer if timer
