@@ -156,11 +156,12 @@ main = {
           return _this.img(function() {
             return _this.css(function() {
               return _this.js(function() {
-                _this.html();
-                if (opts.env !== 'local') {
-                  Utils.mapToViewPath();
-                }
-                return cb && cb();
+                return _this.html(function() {
+                  if (opts.env !== 'local') {
+                    Utils.mapToViewPath();
+                  }
+                  return cb && cb();
+                });
               });
             });
           });

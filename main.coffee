@@ -139,9 +139,9 @@ main =
                     _this.img ->
                         _this.css ->
                             _this.js ->
-                                _this.html()
-                                Utils.mapToViewPath() if opts.env isnt 'local'
-                                cb && cb()
+                                _this.html ->
+                                    Utils.mapToViewPath() if opts.env isnt 'local'
+                                    cb && cb()
     dev: (cb)->
         _this = @
         _this.release ->

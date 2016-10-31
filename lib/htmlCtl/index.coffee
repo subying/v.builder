@@ -26,6 +26,7 @@ class HtmlCtl
         @include = "@@include"
         @isMultiSite = false
 
+
     # 判断是否是多站点模式
     _isMultiSite:->
         _isMultiSite = false
@@ -53,7 +54,7 @@ class HtmlCtl
                     _name = _path.split("/html/")[1]
 
                     _debugPath = _this.htmlDebugPath + _name
-                    _distPath = _this.htmlDistPath + _name
+                    _distPath = path.join _this.htmlDistPath,_name
                     _source = file.contents.toString()
                     if _this.env is 'local'
                         Utils.writeFile(_debugPath,_source,!0)
@@ -114,15 +115,26 @@ class HtmlCtl
             ejs:
                 delimiter: "@"
 
-        vfs.src(_files)
-            .pipe plumber({errorHandler: Utils.errrHandler})
-            .pipe include(_opts)
-            .pipe _this._replaceImg()
-            .pipe vfs.dest(_this.htmlDebugPath)
-            .pipe gulpif(_this.isMultiSite,_this._buildSites(),_this._buildHtml())
-            .on "end",->
-                gutil.log color.green "Html templates done!"
-                _cb()
+        if _this.isMultiSite
+            vfs.src(_files)
+                .pipe plumber({errorHandler: Utils.errrHandler})
+                .pipe include(_opts)
+                .pipe _this._replaceImg()
+                .pipe vfs.dest(_this.htmlDebugPath)
+                .pipe gulpif(_this.isMultiSite,_this._buildSites(),_this._buildHtml())
+                .on "end",->
+                    gutil.log color.green "Html templates done!"
+                    _cb()
+        else
+            vfs.src(_files)
+                .pipe plumber({errorHandler: Utils.errrHandler})
+                .pipe include(_opts)
+                .pipe _this._replaceImg()
+                .pipe vfs.dest(_this.htmlDebugPath)
+                .on "end",->
+                    gutil.log color.green "Html templates done!"
+                    _cb()
+
 
     init: (cb)=>
         _cb = cb or ->

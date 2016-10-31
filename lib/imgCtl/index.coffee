@@ -41,6 +41,7 @@ class ImgCtl
         _imgSrcPath = _this.imgSrcPath
         _imgDebugPath = _this.imgDebugPath
         _imgDistPath = _this.imgDistPath
+
         vfs.src [_imgSrcPath + '/*.{gif,jpg,png,svg}',_imgSrcPath + '/**/*.{gif,jpg,png,svg}']
             .pipe imagemin({quality: '65-80', speed: 4})()
             .pipe vfs.dest(_imgDebugPath)

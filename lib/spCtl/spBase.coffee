@@ -16,11 +16,12 @@ Utils   = require '../utils'
 class SpInit
     # 参数初始化
     constructor:(@opts)->
-        # console.log @opts
+        #console.log @opts
         @srcPath = @opts.srcPath + 'sprite'
-        @imgOutPath = @opts.debugPath + 'img/sprite'
+        @imgOutPath = @opts.imgOutPath or @opts.srcPath+'img/sprite'
         @styleOutPath = @opts.srcPath + 'less/_sprite'
         @spMap = @opts.mapPath + 'spmap.json'
+
         Utils.mkdirsSync(@imgOutPath)
         Utils.mkdirsSync(@styleOutPath)
 

@@ -30,12 +30,12 @@ ImgCtl   = require "../imgCtl"
 opts = global.Cache["gOpts"]
 
 # 初始化构建类库
-spOpts =
-    srcPath: path.join opts.srcPath,'sprite'
-    lessOutPath: path.join opts.srcPath,'less/_sprite'
-    imgOutPath: path.join opts.srcPath,'img/sprite'
-spCtl = new sprite(spOpts)
+#这里需要输出到 src 下, 为了www环境下copy到dist中去 用的是imgCtl的copyImgs
+spOpts = 
+    srcPath: opts.srcPath
+    imgOutPath: opts.debugPath+'img/sprite'
 
+spCtl = new sprite(spOpts)
 cssCtl   = new CssCtl(opts)
 jsCtl    = new JsCtl(opts)
 tplCtl   = new TplCtl(opts)
