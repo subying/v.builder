@@ -1,51 +1,4 @@
 {
-  "_args": [
-    [
-      {
-        "raw": "vbuilder@^2.0.6",
-        "scope": null,
-        "escapedName": "vbuilder",
-        "name": "vbuilder",
-        "rawSpec": "^2.0.6",
-        "spec": ">=2.0.6 <3.0.0",
-        "type": "range"
-      },
-      "F:\\dev\\workspace\\pcstatics.didadi.fm"
-    ]
-  ],
-  "_from": "vbuilder@>=2.0.6 <3.0.0",
-  "_id": "vbuilder@2.1.14",
-  "_inCache": true,
-  "_location": "/vbuilder",
-  "_nodeVersion": "4.0.0",
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/vbuilder-2.1.14.tgz_1460796510824_0.9705228230450302"
-  },
-  "_npmUser": {
-    "name": "lmtdit",
-    "email": "iampjg@gmail.com"
-  },
-  "_npmVersion": "2.11.3",
-  "_phantomChildren": {},
-  "_requested": {
-    "raw": "vbuilder@^2.0.6",
-    "scope": null,
-    "escapedName": "vbuilder",
-    "name": "vbuilder",
-    "rawSpec": "^2.0.6",
-    "spec": ">=2.0.6 <3.0.0",
-    "type": "range"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/vbuilder/-/vbuilder-2.1.14.tgz",
-  "_shasum": "85b9ec674a7e940317bbad455a901ee63a7be7c4",
-  "_shrinkwrap": null,
-  "_spec": "vbuilder@^2.0.6",
-  "_where": "F:\\dev\\workspace\\pcstatics.didadi.fm",
   "author": {
     "name": "lmtdit"
   },
@@ -100,7 +53,6 @@
   ],
   "name": "vbuilder",
   "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lmtdit/v.builder.git"
@@ -108,5 +60,5 @@
   "scripts": {
     "start": "gulp init"
   },
-  "version": "2.1.14"
+  "version": "2.2.0"
 }

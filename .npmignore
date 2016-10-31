@@ -1,0 +1,8 @@
+git_workflow.md
+git_workflow.png
+html_css.jpg
+javascript.jpg
+readme.jpg
+*.log
+node_modules
+node_modules/*
